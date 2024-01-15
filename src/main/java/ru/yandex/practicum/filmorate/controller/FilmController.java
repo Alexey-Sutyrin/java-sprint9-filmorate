@@ -18,16 +18,18 @@ import java.util.Map;
 public class FilmController {
 
     //Хранение списка добавленных фильмов
+
     private final Map<Integer, Film> films = new HashMap<>();
     private int idFilm = 0;
     //получение списка всех фильмов
+
     @GetMapping
     public List<Film> getFilms() {
 
         return new ArrayList<>(films.values());
-
     }
     //добавление фильма в список
+
     @PostMapping()
     public Film addFilm(@RequestBody Film film) throws ValidationException {
 
@@ -37,9 +39,9 @@ public class FilmController {
         log.debug("Сохранение: {}", film);
         films.put(film.getId(), film);
         return film;
-
     }
     //обновление фильма в списке
+
     @PutMapping()
     public Film updateFilm(@RequestBody @NotNull Film film) throws ValidationException {
 
@@ -55,12 +57,11 @@ public class FilmController {
 
         }
         return film;
-
     }
     //создание уникального id для фильма
+
     private int generateIdFilms() {
 
         return ++idFilm;
-        
     }
 }
