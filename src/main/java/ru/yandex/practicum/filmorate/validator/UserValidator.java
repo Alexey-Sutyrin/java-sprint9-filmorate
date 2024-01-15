@@ -4,14 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.filmorate.exeptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
-
 import java.time.LocalDate;
 
 @Slf4j
 public class UserValidator {
-
-     // Процессы проверки-валидации пользователей в базе
-
+    // Процессы проверки-валидации пользователей в базе
     public static void isValidUsers(@RequestBody User user) throws ValidationException {
         if (user.getEmail().isBlank()) {
             log.warn("Ошибка в e-mail: {}", user);

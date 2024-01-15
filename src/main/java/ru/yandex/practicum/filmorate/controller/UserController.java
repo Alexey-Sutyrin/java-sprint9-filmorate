@@ -18,18 +18,12 @@ import java.util.Map;
 public class UserController {
     private final Map<Integer, User> users = new HashMap<>();
     private int idUser = 0;
-
-      
-    // получение списка пользователей
-      
+    //получение списка пользователей
     @GetMapping
     public List<User> getUsers() {
         return new ArrayList<>(users.values());
     }
-
-      
-    // создание пользователя
-      
+    //создание пользователя
     @PostMapping()
     public User addUser(@RequestBody User user) throws ValidationException {
         UserValidator.isValidUsers(user);
@@ -39,10 +33,7 @@ public class UserController {
         users.put(user.getId(), user);
         return user;
     }
-
-      
-      // обновление пользователя
-      
+    //обновление пользователя
     @PutMapping()
     public User updateUser(@RequestBody User user) throws ValidationException {
         if (users.containsKey(user.getId())) {
@@ -54,10 +45,7 @@ public class UserController {
         }
         return user;
     }
-
-      
-    //создание уникадльного id для пользователя
-
+    //создание уникального id для пользователя
     private int generateIdUsers() {
         return ++idUser;
     }

@@ -9,9 +9,7 @@ import java.time.LocalDate;
 
 @Slf4j
 public class FilmValidator {
-
-     // Процессы проверки-валидации фильмов в базе
-
+    // Процессы проверки-валидации фильмов в базе
     public static void isValidFilms(@RequestBody Film film) throws ValidationException {
         if (film.getName().isBlank()) {
             log.warn("Ошибка в названии: {}", film);
