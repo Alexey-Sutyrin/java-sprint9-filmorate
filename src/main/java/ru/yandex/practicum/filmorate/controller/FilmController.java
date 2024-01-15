@@ -46,7 +46,8 @@ public class FilmController {
         return film;
     }
     //создание уникального id для фильма
-    private int generateIdFilms() {
+    private int generateIdFilms()
+    {
         return ++idFilm;
     }
 }
