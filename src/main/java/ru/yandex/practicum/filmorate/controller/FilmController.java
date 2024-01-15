@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.web.bind.annotation.RestController;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -15,39 +16,51 @@ import java.util.Map;
 @Slf4j
 @RequestMapping("/films")
 public class FilmController {
+
     //Хранение списка добавленных фильмов
     private final Map<Integer, Film> films = new HashMap<>();
     private int idFilm = 0;
     //получение списка всех фильмов
     @GetMapping
     public List<Film> getFilms() {
+
         return new ArrayList<>(films.values());
+
     }
     //добавление фильма в список
     @PostMapping()
     public Film addFilm(@RequestBody Film film) throws ValidationException {
+
         FilmValidator.isValidFilms(film);
         int id = generateIdFilms();
         film.setId(id);
         log.debug("Сохранение: {}", film);
         films.put(film.getId(), film);
         return film;
+
     }
     //обновление фильма в списке
     @PutMapping()
-    public Film updateFilm(@RequestBody Film film) throws ValidationException {
+    public Film updateFilm(@RequestBody @NotNull Film film) throws ValidationException {
+
         if (films.containsKey(film.getId())) {
+
             FilmValidator.isValidFilms(film);
             log.debug("Обновление: {}", film);
             films.put(film.getId(), film);
+
         } else {
+
             throw new ValidationException("Такого фильма нет в базе Filmorate.");
+
         }
         return film;
+
     }
     //создание уникального id для фильма
-    private int generateIdFilms()
-    {
+    private int generateIdFilms() {
+
         return ++idFilm;
+        
     }
 }
