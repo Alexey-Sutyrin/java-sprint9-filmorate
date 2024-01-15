@@ -5,8 +5,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exeptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.validator.UserValidator;
-
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,16 +14,21 @@ import java.util.Map;
 @Slf4j
 @RequestMapping("/users")
 public class UserController {
+
     private final Map<Integer, User> users = new HashMap<>();
     private int idUser = 0;
     //получение списка пользователей
+
     @GetMapping
     public List<User> getUsers() {
+
         return new ArrayList<>(users.values());
     }
     //создание пользователя
+
     @PostMapping()
     public User addUser(@RequestBody User user) throws ValidationException {
+
         UserValidator.isValidUsers(user);
         int i = generateIdUsers();
         user.setId(i);
@@ -34,19 +37,25 @@ public class UserController {
         return user;
     }
     //обновление пользователя
+
     @PutMapping()
     public User updateUser(@RequestBody User user) throws ValidationException {
+
         if (users.containsKey(user.getId())) {
+
             UserValidator.isValidUsers(user);
             log.debug("Обновлено: {}", user);
             users.put(user.getId(), user);
         } else {
+
             throw new ValidationException("Такого пользователя нет в базе.");
         }
         return user;
     }
     //создание уникального id для пользователя
+
     private int generateIdUsers() {
+
         return ++idUser;
     }
 }
