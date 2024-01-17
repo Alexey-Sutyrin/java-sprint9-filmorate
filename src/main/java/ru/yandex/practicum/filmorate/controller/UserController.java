@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.validator.UserValidator;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +21,7 @@ import java.util.Map;
 public class UserController {
 
     private final Map<Integer, User> users = new HashMap<>();
-    private int idUser = 0;
+    private int idUser = 1;
     //получение списка пользователей
 
     @GetMapping
@@ -59,6 +60,36 @@ public class UserController {
 
     private int generateIdUsers() {
 
-        return ++idUser;
+        return idUser++;
+    }
+
+    private void validateUser(User user) {
+        validateEmail(user.getEmail());
+        validateLogin(user.getLogin());
+        if (user.getName() == null || user.getName().isBlank() || user.getName().isEmpty()) {
+            user.setName(user.getLogin());
+        }
+        validateBirthday(user.getBirthday());
+    }
+
+    private void validateEmail(String email) {
+        if (email == null || !email.contains("@") || email.isBlank()) {
+            log.warn("Ошибка валидации пользователя. Некорректный адрес электронной почты");
+            throw new ValidationException("Некорректный адрес электронной почты");
+        }
+    }
+
+    private void validateLogin(String login) {
+        if (login == null || login.isBlank() || login.contains(" ")) {
+            log.warn("Ошибка валидации пользователя. Некорректный логин");
+            throw new ValidationException("Некорректный логин");
+        }
+    }
+
+    private void validateBirthday(LocalDate birthday) {
+        if (birthday == null || birthday.isAfter(LocalDate.now())) {
+            log.warn("Ошибка валидации пользователя. Дата рождения не может быть в будущем");
+            throw new ValidationException("Дата рождения не может быть в будущем");
+        }
     }
 }
