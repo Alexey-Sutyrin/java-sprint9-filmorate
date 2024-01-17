@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.controller;
+package ru.yandex.practicum.filmorate.controller; // Update 1 for review 1 - restore
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.web.bind.annotation.RestController;
