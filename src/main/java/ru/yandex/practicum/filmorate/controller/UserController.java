@@ -1,10 +1,13 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exeptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.validator.UserValidator;
+
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +16,7 @@ import java.util.Map;
 @RestController
 @Slf4j
 @RequestMapping("/users")
+@Validated
 public class UserController {
 
     private final Map<Integer, User> users = new HashMap<>();
@@ -27,24 +31,23 @@ public class UserController {
     //создание пользователя
 
     @PostMapping()
-    public User addUser(@RequestBody User user) throws ValidationException {
-
+    public User addUser(@Valid @RequestBody User user) throws ValidationException {
+        log.debug("Сохранено: {}", user);
         UserValidator.isValidUsers(user);
         int i = generateIdUsers();
         user.setId(i);
-        log.debug("Сохранено: {}", user);
         users.put(user.getId(), user);
         return user;
     }
     //обновление пользователя
 
     @PutMapping()
-    public User updateUser(@RequestBody User user) throws ValidationException {
+    public User updateUser(@Valid @RequestBody User user) throws ValidationException {
 
         if (users.containsKey(user.getId())) {
 
-            UserValidator.isValidUsers(user);
             log.debug("Обновлено: {}", user);
+            UserValidator.isValidUsers(user);
             users.put(user.getId(), user);
         } else {
 

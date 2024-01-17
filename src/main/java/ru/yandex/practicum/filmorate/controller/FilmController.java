@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.controller; // Update 1 for review 1 - restore
+package ru.yandex.practicum.filmorate.controller; // Fix - Log Debug перенесен в начало
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,11 +33,12 @@ public class FilmController {
     @PostMapping()
     public Film addFilm(@RequestBody Film film) throws ValidationException {
 
+        log.debug("Добавление фильма: {}", film);
         FilmValidator.isValidFilms(film);
         int id = generateIdFilms();
         film.setId(id);
-        log.debug("Сохранение: {}", film);
         films.put(film.getId(), film);
+        log.debug("Добавление успешно: {}", film);
         return film;
     }
     //обновление фильма в списке
@@ -46,11 +47,10 @@ public class FilmController {
     public Film updateFilm(@RequestBody @NotNull Film film) throws ValidationException {
 
         if (films.containsKey(film.getId())) {
-
+            log.debug("Обновление фильма: {}", film);
             FilmValidator.isValidFilms(film);
-            log.debug("Обновление: {}", film);
             films.put(film.getId(), film);
-
+            log.debug("Обновление успешно: {}", film);
         } else {
 
             throw new ValidationException("Такого фильма нет в базе Filmorate.");
