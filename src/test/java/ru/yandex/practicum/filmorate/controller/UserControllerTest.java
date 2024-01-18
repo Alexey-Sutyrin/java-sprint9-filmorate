@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.controller;
+package ru.yandex.practicum.filmorate.controller;//Fix 4 - дополнительные тесты пользователей
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,12 +16,14 @@ public class UserControllerTest {
 
     @BeforeEach
     public void beforeEach() {
+
         controller = new UserController();
     }
 
     @Test
     public void shouldPassValidation() {
-        controller.addUser(User.builder()
+
+        controller.create(User.builder()
                 .login("Mango11")
                 .name("Melissa")
                 .email("nicemail@mail.ru")
@@ -33,6 +35,7 @@ public class UserControllerTest {
 
     @Test
     public void shouldNotPassEmailValidation() {
+
         User user1 = User.builder()
                 .login("Mango11")
                 .name("Melissa")
@@ -46,12 +49,13 @@ public class UserControllerTest {
                 .birthday(LocalDate.of(2000, 8, 15))
                 .build();
 
-        assertThrows(ValidationException.class, () -> controller.addUser(user1));
-        assertThrows(ValidationException.class, () -> controller.addUser(user2));
+        assertThrows(ValidationException.class, () -> controller.create(user1));
+        assertThrows(ValidationException.class, () -> controller.create(user2));
     }
 
     @Test
     public void shouldNotPassLoginValidation() {
+
         User user1 = User.builder()
                 .login("")
                 .name("Melissa")
@@ -65,12 +69,13 @@ public class UserControllerTest {
                 .birthday(LocalDate.of(2000, 8, 15))
                 .build();
 
-        assertThrows(ValidationException.class, () -> controller.addUser(user1));
-        assertThrows(ValidationException.class, () -> controller.addUser(user2));
+        assertThrows(ValidationException.class, () -> controller.create(user1));
+        assertThrows(ValidationException.class, () -> controller.create(user2));
     }
 
     @Test
     public void shouldNotPassBirthdayValidation() {
+
         User user = User.builder()
                 .login("Mango11")
                 .name("Melissa")
@@ -78,26 +83,28 @@ public class UserControllerTest {
                 .birthday(LocalDate.of(3000, 8, 15))
                 .build();
 
-        assertThrows(ValidationException.class, () -> controller.addUser(user));
+        assertThrows(ValidationException.class, () -> controller.create(user));
     }
 
     @Test
     public void emptyUserShouldNotPassValidation() {
+
         User user = User.builder().build();
 
-        assertThrows(ValidationException.class, () -> controller.addUser(user));
+        assertThrows(ValidationException.class, () -> controller.create(user));
     }
 
     @Test
     public void shouldUpdateUser() {
-        controller.addUser(User.builder()
+
+        controller.create(User.builder()
                 .login("Mango11")
                 .name("Melissa")
                 .email("nicemail@mail.ru")
                 .birthday(LocalDate.of(2000, 8, 15))
                 .build());
 
-        controller.updateUser(User.builder()
+        controller.update(User.builder()
                 .id(1)
                 .login("Mango22")
                 .name("Anna")
@@ -110,15 +117,15 @@ public class UserControllerTest {
 
     @Test
     public void shouldCreateUserWithEmptyName() {
+
         User user = User.builder()
                 .login("Mango11")
                 .email("nicemail@mail.ru")
                 .birthday(LocalDate.of(2000, 8, 15))
                 .build();
 
-        controller.addUser(user);
+        controller.create(user);
 
         assertEquals("Mango11", user.getName());
     }
 }
-

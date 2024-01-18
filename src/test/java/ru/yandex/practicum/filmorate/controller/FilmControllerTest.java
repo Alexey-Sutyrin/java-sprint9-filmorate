@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.controller;
+package ru.yandex.practicum.filmorate.controller; //Fix 4 - дополнительные тесты фильмов
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,11 +16,13 @@ public class FilmControllerTest {
 
     @BeforeEach
     public void beforeEach() {
+
         controller = new FilmController();
     }
 
     @Test
     public void shouldPassValidation() {
+
         controller.addFilm(Film.builder()
                 .name("Аватар")
                 .description("Путь воды")
@@ -33,6 +35,7 @@ public class FilmControllerTest {
 
     @Test
     public void shouldNotPassNameValidation() {
+
         Film film = Film.builder()
                 .name("")
                 .description("Уже не путь воды")
@@ -45,6 +48,7 @@ public class FilmControllerTest {
 
     @Test
     public void shouldNotPassDescriptionValidation() {
+
         Film film = Film.builder()
                 .name("Аватар")
                 .description("«Аватар: Путь воды» (англ. Avatar: The Way of Water) — американский " +
@@ -60,6 +64,7 @@ public class FilmControllerTest {
 
     @Test
     public void shouldNotPassReleaseDateValidation() {
+
         Film film1 = Film.builder()
                 .name("Аватар")
                 .description("Путь воды")
@@ -79,6 +84,7 @@ public class FilmControllerTest {
 
     @Test
     public void shouldNotPassDurationValidation() {
+
         Film film = Film.builder()
                 .name("Аватар")
                 .description("Путь воды")
@@ -91,12 +97,14 @@ public class FilmControllerTest {
 
     @Test
     public void emptyFilmShouldNotPassValidation() {
+
         Film film = Film.builder().build();
         assertThrows(ValidationException.class, () -> controller.addFilm(film));
     }
 
     @Test
     public void shouldUpdateFilm() {
+
         controller.addFilm(Film.builder()
                 .name("Аватар")
                 .description("Путь воды")
@@ -118,6 +126,7 @@ public class FilmControllerTest {
 
     @Test
     public void shouldPassDescriptionValidationWith200Symbols() {
+
         controller.addFilm(Film.builder()
                 .name("Аватар")
                 .description("«Аватар: Путь воды» (англ. Avatar: The Way of Water) — американский " +
@@ -132,6 +141,7 @@ public class FilmControllerTest {
 
     @Test
     public void shouldPassReleaseDateValidation() {
+
         controller.addFilm(Film.builder()
                 .name("Аватар")
                 .description("Путь воды")
