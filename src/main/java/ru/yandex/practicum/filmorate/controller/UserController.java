@@ -18,7 +18,7 @@ import java.util.Map;
 @Validated
 public class UserController {
 
-    private int IdUser = 1;
+    private int idUser = 1;
     private final Map<Integer, User> users = new HashMap<>();
 
     //получение списка пользователей
@@ -66,7 +66,7 @@ public class UserController {
     //создание уникального id для пользователя
     private int getIdUser() {
 
-        return IdUser++;
+        return idUser++;
     }
 
     private void validateUser(User user) {
