@@ -1,110 +1,74 @@
 package ru.yandex.practicum.filmorate.controller; // Fix 3 - добавляем зависимость в Pom, пишем @Valid
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exeptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 @Slf4j
 @RestController
 @RequestMapping("/users")
-@Validated
 public class UserController {
 
-    private int idUser = 1;
-    private final Map<Integer, User> users = new HashMap<>();
+    private final UserService userService;
 
-    //получение списка пользователей
+    @Autowired
+    public UserController(UserService userService) {
+
+        this.userService = userService;
+    }
+
     @GetMapping
     public Collection<User> getUsers() {
 
-        return users.values();
+        return userService.getUsers();
     }
 
-    //создание пользователя
     @PostMapping
     public User create(@Valid @RequestBody User user) {
 
-        for (User registeredUser : users.values()) {
-
-            if (registeredUser.getEmail().equals(user.getEmail())) {
-
-                log.warn("Пользователь с электронной почтой " + user.getEmail()
-                        + " уже зарегистрирован");
-                throw new ValidationException();
-            }
-        }
-        validateUser(user);
-        user.setId(getIdUser());
-        users.put(user.getId(), user);
-        log.info("Добавлен новый пользователь");
-        return user;
+        return userService.create(user);
     }
 
-    //обновление пользователя
     @PutMapping
     public User update(@Valid @RequestBody User user) {
 
-        validateUser(user);
-        if (!users.containsKey(user.getId())) {
-
-            log.warn("Невозможно обновить пользователя");
-            throw new ValidationException();
-        }
-        users.put(user.getId(), user);
-        log.info("Пользователь с id " + user.getId() + " обновлён");
-        return user;
+        return userService.update(user);
     }
 
-    //создание уникального id для пользователя
-    private int getIdUser() {
+    @GetMapping("/{id}")
+    public User findUserById(@PathVariable long id) {
 
-        return idUser++;
+        return userService.findUserById(id);
     }
 
-    private void validateUser(User user) {
+    @PutMapping(value = "/{id}/friends/{friendId}")
+    public void addFriend(@PathVariable long id, @PathVariable long friendId) {
 
-        validateEmail(user.getEmail());
-        validateLogin(user.getLogin());
-        if (user.getName() == null || user.getName().isBlank() || user.getName().isEmpty()) {
-
-            user.setName(user.getLogin());
-        }
-        validateBirthday(user.getBirthday());
+        userService.addFriend(id, friendId);
     }
 
-    // дополнительные проверки аналогично Film Controller
-    private void validateEmail(String email) {
+    @DeleteMapping(value = "/{id}/friends/{friendId}")
+    public void removeFromFriends(@PathVariable long id, @PathVariable long friendId) {
 
-        if (email == null || !email.contains("@") || email.isBlank()) {
-
-            log.warn("Ошибка валидации пользователя. Некорректный адрес электронной почты");
-            throw new ValidationException();
-        }
+        userService.removeFromFriends(id, friendId);
     }
 
-    private void validateLogin(String login) {
-        if (login == null || login.isBlank() || login.contains(" ")) {
+    @GetMapping("/{id}/friends")
+    public List<User> getAllFriends(@PathVariable long id) {
 
-            log.warn("Ошибка валидации пользователя. Некорректный логин");
-            throw new ValidationException();
-        }
+        return userService.getAllFriends(id);
     }
 
-    private void validateBirthday(LocalDate birthday) {
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public List<User> getMutualFriends(@PathVariable long id, @PathVariable long otherId) {
 
-        if (birthday == null || birthday.isAfter(LocalDate.now())) {
-
-            log.warn("Ошибка валидации пользователя. Дата рождения не может быть в будущем");
-            throw new ValidationException();
-        }
+        return userService.getMutualFriends(id, otherId);
     }
 }
 
