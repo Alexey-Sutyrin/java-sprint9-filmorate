@@ -27,6 +27,7 @@ public class FilmController {
 
         return films.values();
     }
+
     // добавление фильма в список
     @PostMapping
     public Film addFilm(@Valid @RequestBody Film film) {
@@ -37,6 +38,7 @@ public class FilmController {
         films.put(film.getId(), film);
         return film;
     }
+
     //обновление фильма в списке
     @PutMapping
     public Film updateFilm(@Valid @RequestBody Film film) {
@@ -51,6 +53,7 @@ public class FilmController {
         log.info("Фильм c id" + film.getId() + " был обновлён");
         return film;
     }
+
     //создание уникального id для фильма
     private int getIdFilm() {
 
@@ -64,6 +67,7 @@ public class FilmController {
         validateDate(film.getReleaseDate());
         validateDuration(film.getDuration());
     }
+
     // проверка названия фильма
     private void validateName(String name) {
 
@@ -73,6 +77,7 @@ public class FilmController {
             throw new ValidationException();
         }
     }
+
     // проверка описания фильма
     private void validateDescriptionLength(String description) {
 
@@ -82,6 +87,7 @@ public class FilmController {
             throw new ValidationException();
         }
     }
+
     // проверка даты релиза фильма
     private void validateDate(LocalDate releaseDate) {
 
@@ -91,6 +97,7 @@ public class FilmController {
             throw new ValidationException();
         }
     }
+
     // проверка продолжительности фильма
     private void validateDuration(Integer duration) {
 

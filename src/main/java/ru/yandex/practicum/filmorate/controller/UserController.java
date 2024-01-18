@@ -62,6 +62,7 @@ public class UserController {
         log.info("Пользователь с id " + user.getId() + " обновлён");
         return user;
     }
+
     //создание уникального id для пользователя
     private int getIdUser() {
 
