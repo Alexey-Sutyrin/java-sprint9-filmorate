@@ -95,13 +95,13 @@ public class UserService {
     }
 
     public List<User> getMutualFriends(long userId, long otherUserId) {
+
         List<User> mutualFriends = new ArrayList<>();
         User user = findUserById(userId);
         User otherUser = findUserById(otherUserId);
-
         Set<Long> mutualFriendsIds = getIntersection(user.getFriends(), otherUser.getFriends());
-
         for (Long id : mutualFriendsIds) {
+
             mutualFriends.add(findUserById(id));
         }
 
@@ -123,8 +123,9 @@ public class UserService {
 
         return nextId++;
     }
+
     private Set<Long> getIntersection(Set<Long> set1, Set<Long> set2) {
-        
+
         Set<Long> result = new HashSet<>(set1);
         result.retainAll(set2);
         return result;
