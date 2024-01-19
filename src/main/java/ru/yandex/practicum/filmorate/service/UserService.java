@@ -124,6 +124,7 @@ public class UserService {
         return nextId++;
     }
     private Set<Long> getIntersection(Set<Long> set1, Set<Long> set2) {
+        
         Set<Long> result = new HashSet<>(set1);
         result.retainAll(set2);
         return result;
