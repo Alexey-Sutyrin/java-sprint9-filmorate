@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.model;
+package ru.yandex.practicum.filmorate.model; //Fix - NotNull для строк исправил на NotBlank
 
 import lombok.Builder;
 import lombok.Data;
@@ -14,10 +14,10 @@ public class User {
 
     private final Set<Long> friends = new HashSet<>();
     private Long id;
-    @NotNull
-    @Email(message = "Адрес электронной почты введен некорректно")
+    @NotBlank(message = "Адрес e-mail не может быть пустым")
+    @Email(message = "Адрес e-mail введен некорректно")
     private final String email;
-    @NotEmpty(message = "Логин не может быть пустым")
+    @NotBlank(message = "Логин не может быть пустым")
     private final String login;
     @NotNull
     @PastOrPresent(message = "День рождения не может быть в будущем")

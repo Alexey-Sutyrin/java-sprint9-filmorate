@@ -1,7 +1,8 @@
-package ru.yandex.practicum.filmorate.controller; // Fix 3 - добавляем зависимость в Pom, пишем @Valid
+package ru.yandex.practicum.filmorate.controller; // Fix - @Validated вернул
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
@@ -13,6 +14,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/users")
+@Validated
 public class UserController {
 
     private final UserService userService;

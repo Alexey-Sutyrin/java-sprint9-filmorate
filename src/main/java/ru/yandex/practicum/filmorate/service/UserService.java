@@ -1,6 +1,6 @@
-package ru.yandex.practicum.filmorate.service;
+package ru.yandex.practicum.filmorate.service;//Fix - Guava из POM.xml использовалась для
+//Sets.intersection, и только там.Заменил на стандартное решение getIntersection с использованием HashSet, guava из POM.xml убрал
 
-import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,6 +11,7 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 import ru.yandex.practicum.filmorate.validator.UserValidator;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -38,7 +39,7 @@ public class UserService {
 
             if (registeredUser.getEmail().equals(user.getEmail())) {
 
-                log.warn("Пользователь с электронной почтой " + user.getEmail()
+                log.warn("Пользователь с e-mail адресом " + user.getEmail()
                         + " уже зарегистрирован");
                 throw new ValidationException();
             }
@@ -94,15 +95,16 @@ public class UserService {
     }
 
     public List<User> getMutualFriends(long userId, long otherUserId) {
-
         List<User> mutualFriends = new ArrayList<>();
         User user = findUserById(userId);
         User otherUser = findUserById(otherUserId);
-        Set<Long> mutualFriendsIds = Sets.intersection(user.getFriends(), otherUser.getFriends());
-        for (Long id : mutualFriendsIds) {
 
+        Set<Long> mutualFriendsIds = getIntersection(user.getFriends(), otherUser.getFriends());
+
+        for (Long id : mutualFriendsIds) {
             mutualFriends.add(findUserById(id));
         }
+
         return mutualFriends;
     }
 
@@ -120,5 +122,10 @@ public class UserService {
     private long getNextId() {
 
         return nextId++;
+    }
+    private Set<Long> getIntersection(Set<Long> set1, Set<Long> set2) {
+        Set<Long> result = new HashSet<>(set1);
+        result.retainAll(set2);
+        return result;
     }
 }
