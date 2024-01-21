@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.controller;
+package ru.yandex.practicum.filmorate.controller; //Fixed tests
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
