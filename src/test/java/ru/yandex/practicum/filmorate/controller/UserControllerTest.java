@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.filmorate.exeptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
@@ -16,7 +15,6 @@ import java.time.LocalDate;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class UserControllerTest {
 
