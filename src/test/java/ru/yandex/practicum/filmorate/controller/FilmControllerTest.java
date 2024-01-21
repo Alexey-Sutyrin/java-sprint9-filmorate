@@ -177,6 +177,7 @@ public class FilmControllerTest {
 
     @Test
     public void shouldAddLike() {
+        
         User user = User.builder()
                 .login("Iris")
                 .name("Melissa")
@@ -199,6 +200,7 @@ public class FilmControllerTest {
     }
     @Test
     public void shouldDeleteLike() {
+
         User user = User.builder()
                 .login("Iris")
                 .name("Melissa")
