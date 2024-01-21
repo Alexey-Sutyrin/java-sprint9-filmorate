@@ -4,14 +4,12 @@ package ru.yandex.practicum.filmorate.service;//Fix - Guava из POM.xml исп�
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 import ru.yandex.practicum.filmorate.exeptions.UserDoesNotExistException;
 import ru.yandex.practicum.filmorate.exeptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 import ru.yandex.practicum.filmorate.validator.UserValidator;
 
-import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -19,7 +17,6 @@ import java.util.Set;
 
 @Slf4j
 @Service
-@Validated
 public class UserService {
 
     private long nextId = 1;
@@ -36,7 +33,7 @@ public class UserService {
         return List.copyOf(userStorage.getUsers().values());
     }
 
-    public User create(@Valid User user) {
+    public User create(User user) {
 
         for (User registeredUser : userStorage.getUsers().values()) {
 
@@ -53,7 +50,7 @@ public class UserService {
         return userStorage.create(user);
     }
 
-    public User update(@Valid User user) {
+    public User update(User user) {
 
         UserValidator.validateUser(user);
         if (userStorage.findUserById(user.getId()) == null) {
@@ -92,11 +89,9 @@ public class UserService {
 
         User user = findUserById(userId);
         User friend = findUserById(friendId);
-        if (user != null && friend != null) {
-            user.getFriends().remove(friendId);
-            friend.getFriends().remove(userId);
-            log.info("Пользователи {} и {} теперь не являются друзьями", user, friend);
-        }
+        user.getFriends().remove(friend);
+        friend.getFriends().remove(user);
+        log.info("Пользователи {} и {} теперь не являются друзьями", user, friend);
     }
 
     public List<User> getMutualFriends(long userId, long otherUserId) {
