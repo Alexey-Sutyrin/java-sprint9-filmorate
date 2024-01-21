@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.controller; //Fixed tests
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
@@ -172,5 +173,51 @@ public class FilmControllerTest {
                 .build());
 
         assertEquals(1, controller.getFilms().size());
+    }
+
+    @Test
+    public void shouldAddLike() {
+        User user = User.builder()
+                .login("Iris")
+                .name("Melissa")
+                .email("catcat@mail.ru")
+                .birthday(LocalDate.of(2000, 8, 15))
+                .build();
+        userService.create(user);
+
+        Film film = Film.builder()
+                .name("Форрест Гамп")
+                .description("Жизнь как коробка конфет")
+                .duration(192)
+                .releaseDate(LocalDate.of(1981, 12, 6))
+                .build();
+        filmService.create(film);
+
+        filmService.addLike(film.getId(), user.getId());
+
+        assertEquals(1, filmService.findFilmById(film.getId()).getLikes().size());
+    }
+    @Test
+    public void shouldDeleteLike() {
+        User user = User.builder()
+                .login("Iris")
+                .name("Melissa")
+                .email("willow@mail.ru")
+                .birthday(LocalDate.of(2000, 8, 15))
+                .build();
+        userService.create(user);
+
+        Film film = Film.builder()
+                .name("Форрест беги")
+                .description("Жизнь как коробка конфет")
+                .duration(192)
+                .releaseDate(LocalDate.of(1981, 12, 6))
+                .build();
+        filmService.create(film);
+
+        filmService.addLike(film.getId(), user.getId());
+        filmService.deleteLike(film.getId(), user.getId());
+
+        assertEquals(0, filmService.findFilmById(film.getId()).getLikes().size());
     }
 }
