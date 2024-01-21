@@ -22,5 +22,6 @@ public class User {
     @NotNull
     @PastOrPresent(message = "День рождения не может быть в будущем")
     private final LocalDate birthday;
+    @NotBlank(message = "Имя не может быть пустым")
     private String name;
 }

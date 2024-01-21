@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.model;//Fix - NotNull для строк и
 import lombok.Builder;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.URL;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
@@ -20,10 +21,12 @@ public class Film {
     @Length(max = 200, message = "Максимальная длина описания — 200 символов")
     @NotBlank(message = "Описание не может быть пустым")
     private final String description;
-    @Past(message = "Дата релиза должна быть в прошлом")
+    @PastOrPresent(message = "Дата релиза должна быть в прошлом")
     @NotNull
     private final LocalDate releaseDate;
-    @Positive(message = "Продолжительность фильма не может быть отрицательной")
+    @PositiveOrZero(message = "Продолжительность фильма не может быть отрицательной")
     @NotNull
     private final Integer duration;
+    @URL(message = "Некорректный URL-адрес")
+    private String posterUrl;
 }
