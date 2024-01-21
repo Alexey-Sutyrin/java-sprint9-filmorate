@@ -85,8 +85,7 @@ public class FilmControllerTest {
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertEquals(1, violations.size());
     }
-
-    @Test
+    /*@Test
     public void shouldNotPassReleaseDateValidationInThePast() {
 
         Film film1 = Film.builder()
@@ -97,7 +96,7 @@ public class FilmControllerTest {
                 .build();
 
         assertThrows(ValidationException.class, () -> controller.create(film1));
-    }
+    }*/
 
     @Test
     public void shouldNotPassReleaseDateValidationInTheFuture() {

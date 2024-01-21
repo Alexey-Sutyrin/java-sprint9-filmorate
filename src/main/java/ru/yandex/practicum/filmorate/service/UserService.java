@@ -4,12 +4,13 @@ package ru.yandex.practicum.filmorate.service;//Fix - Guava из POM.xml исп�
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 import ru.yandex.practicum.filmorate.exeptions.UserDoesNotExistException;
 import ru.yandex.practicum.filmorate.exeptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
-import ru.yandex.practicum.filmorate.validator.UserValidator;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.Set;
 
 @Slf4j
 @Service
+@Validated
 public class UserService {
 
     private long nextId = 1;
@@ -33,34 +35,31 @@ public class UserService {
         return List.copyOf(userStorage.getUsers().values());
     }
 
-    public User create(User user) {
-
+    public User create(@Valid User user) {
         for (User registeredUser : userStorage.getUsers().values()) {
-
             if (registeredUser.getEmail().equals(user.getEmail())) {
-
-                log.warn("Пользователь с e-mail адресом " + user.getEmail()
-                        + " уже зарегистрирован");
+                log.warn("Пользователь с e-mail адресом " + user.getEmail() + " уже зарегистрирован");
                 throw new ValidationException();
             }
         }
-        UserValidator.validateUser(user);
+
         user.setId(getNextId());
+        if (user.getName() == null || user.getName().isBlank() || user.getName().isEmpty()) {
+            user.setName(user.getLogin());
+        }
         log.info("Добавлен новый пользователь");
         return userStorage.create(user);
     }
 
-    public User update(User user) {
-
-        UserValidator.validateUser(user);
+    public User update(@Valid User user) {
         if (userStorage.findUserById(user.getId()) == null) {
-
             log.warn("Невозможно обновить пользователя");
             throw new UserDoesNotExistException();
         }
         log.info("Пользователь с id {} обновлён", user.getId());
         return userStorage.update(user);
     }
+
 
     public User findUserById(long id) {
 

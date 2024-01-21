@@ -3,16 +3,18 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 import ru.yandex.practicum.filmorate.exeptions.FilmDoesNotExistException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
-import ru.yandex.practicum.filmorate.validator.FilmValidator;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@Validated
 public class FilmService {
 
     private final FilmStorage filmStorage;
@@ -31,25 +33,21 @@ public class FilmService {
         return List.copyOf(filmStorage.getFilms().values());
     }
 
-    public Film create(Film film) {
-
-        FilmValidator.validateFilm(film);
+    public Film create(@Valid Film film) {
         film.setId(getNextId());
         log.info("Добавлен новый фильм");
         return filmStorage.create(film);
     }
 
-    public Film update(Film film) {
-
-        FilmValidator.validateFilm(film);
+    public Film update(@Valid Film film) {
         if (filmStorage.findFilmById(film.getId()) == null) {
-
             log.warn("Невозможно обновить фильм");
             throw new FilmDoesNotExistException();
         }
-        log.info("Фильм с id " + film.getId() + " был обновлён");
+        log.info("Фильм с id {} был обновлён", film.getId());
         return filmStorage.update(film);
     }
+
 
     public Film findFilmById(long id) {
 

@@ -121,7 +121,8 @@ public class UserControllerTest {
                 .birthday(LocalDate.of(2000, 8, 15))
                 .build();
 
-        assertThrows(ValidationException.class, () -> controller.create(user));
+        Set<ConstraintViolation<User>> violations = validator.validate(user);
+        assertEquals(1, violations.size());
     }
 
     @Test
@@ -138,6 +139,17 @@ public class UserControllerTest {
         assertEquals(1, violations.size());
     }
 }
+
+
+
+
+
+
+
+
+
+
+
 
 
 
