@@ -177,7 +177,7 @@ public class FilmControllerTest {
 
     @Test
     public void shouldAddLike() {
-        
+
         User user = User.builder()
                 .login("Iris")
                 .name("Melissa")
@@ -198,6 +198,7 @@ public class FilmControllerTest {
 
         assertEquals(1, filmService.findFilmById(film.getId()).getLikes().size());
     }
+
     @Test
     public void shouldDeleteLike() {
 
