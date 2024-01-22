@@ -1,25 +1,26 @@
-package ru.yandex.practicum.filmorate.model;
+package ru.yandex.practicum.filmorate.model; //Fix - NotNull для строк исправил на NotBlank
 
 import lombok.Builder;
 import lombok.Data;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Builder
 public class User {
 
-    private Integer id;
-    // Fix 2 -Нужно единообразие в стиле, лучше аннотации разместить как в User сделано
-    @NotBlank(message = "Имя пользователя не может быть пустым")
-    private String name;
-    @NotBlank(message = "Email не может быть пустым")
-    @Email(message = "Некорректный формат Email")
+    private final Set<Long> friends = new HashSet<>();
+    private Long id;
+    @NotBlank(message = "Адрес e-mail не может быть пустым")
+    @Email(message = "Адрес e-mail введен некорректно")
     private final String email;
-    @NotBlank(message = "Логин не может быть пустым")
+    @Pattern(regexp = "^\\w+$", message = "Логин не может быть пустым или содержать пробелы")
     private final String login;
+    @NotNull
+    @PastOrPresent(message = "День рождения не может быть в будущем")
     private final LocalDate birthday;
-
+    private String name;
 }

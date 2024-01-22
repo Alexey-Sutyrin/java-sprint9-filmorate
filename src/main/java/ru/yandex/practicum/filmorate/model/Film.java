@@ -1,22 +1,29 @@
-package ru.yandex.practicum.filmorate.model;
+package ru.yandex.practicum.filmorate.model;//Fix - NotNull для строк исправил на NotBlank
 
 import lombok.Builder;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Builder
 public class Film {
 
-    private Integer id;
+    private final Set<Long> likes = new HashSet<>();
+    private Long id;
     @NotBlank(message = "Название фильма не может быть пустым")
     private final String name;
-    @NotBlank(message = "Описание фильма не может быть пустым")
+    @Length(max = 200, message = "Максимальная длина описания — 200 символов")
+    @NotBlank(message = "Описание не может быть пустым")
     private final String description;
-    @PositiveOrZero(message = "Продолжительность фильма не может быть отрицательной")
-    private final Integer duration;
+    @Past(message = "Дата релиза должна быть в прошлом")
+    @NotNull
     private final LocalDate releaseDate;
+    @Positive(message = "Продолжительность фильма не может быть отрицательной")
+    @NotNull
+    private final Integer duration;
 }
