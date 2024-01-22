@@ -7,6 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import ru.yandex.practicum.filmorate.exeptions.FilmDoesNotExistException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.validator.FilmValidator;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -34,12 +35,16 @@ public class FilmService {
     }
 
     public Film create(@Valid Film film) {
+
+        FilmValidator.validateFilm(film);
         film.setId(getNextId());
         log.info("Добавлен новый фильм");
         return filmStorage.create(film);
     }
 
     public Film update(@Valid Film film) {
+
+        FilmValidator.validateFilm(film);
         if (filmStorage.findFilmById(film.getId()) == null) {
             log.warn("Невозможно обновить фильм");
             throw new FilmDoesNotExistException();

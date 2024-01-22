@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.exeptions.UserDoesNotExistException;
 import ru.yandex.practicum.filmorate.exeptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.validator.UserValidator;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -36,6 +37,8 @@ public class UserService {
     }
 
     public User create(@Valid User user) {
+
+        UserValidator.validateUser(user);
         for (User registeredUser : userStorage.getUsers().values()) {
             if (registeredUser.getEmail().equals(user.getEmail())) {
                 log.warn("Пользователь с e-mail адресом " + user.getEmail() + " уже зарегистрирован");
@@ -52,6 +55,8 @@ public class UserService {
     }
 
     public User update(@Valid User user) {
+
+        UserValidator.validateUser(user);
         if (userStorage.findUserById(user.getId()) == null) {
             log.warn("Невозможно обновить пользователя");
             throw new UserDoesNotExistException();
