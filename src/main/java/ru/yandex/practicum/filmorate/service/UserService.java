@@ -88,9 +88,12 @@ public class UserService {
 
         User user = findUserById(userId);
         User friend = findUserById(friendId);
-        user.getFriends().remove(friend);
-        friend.getFriends().remove(user);
-        log.info("Пользователи {} и {} теперь не являются друзьями", user, friend);
+        if (user != null && friend != null) {
+
+            user.getFriends().remove(friend);
+            friend.getFriends().remove(user);
+            log.info("Пользователи {} и {} теперь не являются друзьями", user, friend);
+        }
     }
 
     public List<User> getMutualFriends(long userId, long otherUserId) {
