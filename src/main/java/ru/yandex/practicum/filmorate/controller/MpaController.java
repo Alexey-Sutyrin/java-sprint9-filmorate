@@ -13,20 +13,24 @@ import java.util.Collection;
 @RestController
 @RequestMapping("/mpa")
 public class MpaController {
+
     private final MpaService mpaService;
 
     @Autowired
     public MpaController(MpaService mpaService) {
+
         this.mpaService = mpaService;
     }
 
     @GetMapping
     public Collection<Mpa> getAllMpa() {
+
         return mpaService.getAllMpa();
     }
 
     @GetMapping("/{id}")
     public Mpa getMpaById(@PathVariable int id) {
+
         return mpaService.getMpaById(id);
     }
 }

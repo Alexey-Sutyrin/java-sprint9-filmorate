@@ -1,24 +1,21 @@
-package ru.yandex.practicum.filmorate.service; //Valid changed
+package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
-import ru.yandex.practicum.filmorate.exeptions.FilmDoesNotExistException;
+import ru.yandex.practicum.filmorate.exception.FilmDoesNotExistException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.validator.FilmValidator;
 
-import javax.validation.Valid;
-import java.util.List;
-import java.util.stream.Collectors;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@Validated
 public class FilmService {
 
     private final FilmStorage filmStorage;
@@ -35,7 +32,7 @@ public class FilmService {
         return Collections.unmodifiableCollection(filmStorage.getFilms().values());
     }
 
-    public Film create(@Valid Film film) {
+    public Film create(Film film) {
 
         FilmValidator.validateFilm(film);
         film.setId(getNextId());
@@ -43,14 +40,14 @@ public class FilmService {
         return filmStorage.create(film);
     }
 
-    public Film update(@Valid Film film) {
+    public Film update(Film film) {
 
         FilmValidator.validateFilm(film);
         if (filmStorage.findFilmById(film.getId()) == null) {
             log.warn("Невозможно обновить фильм");
             throw new FilmDoesNotExistException();
         }
-        log.info("Фильм с id {} был обновлён", film.getId());
+        log.info("Фильм с id " + film.getId() + " был обновлён");
         return filmStorage.update(film);
     }
 
@@ -58,7 +55,6 @@ public class FilmService {
 
         Film film = filmStorage.findFilmById(id);
         if (film == null) {
-
             throw new FilmDoesNotExistException();
         }
         return film;

@@ -17,6 +17,7 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Autowired
     public InMemoryFilmStorage(@Qualifier("inMemoryUserStorage") UserStorage userStorage) {
+
         this.userStorage = userStorage;
     }
 
@@ -24,6 +25,7 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Map<Long, Film> getFilms() {
+
         return films;
     }
 

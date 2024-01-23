@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exeptions.UserDoesNotExistException;
+import ru.yandex.practicum.filmorate.exception.UserDoesNotExistException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
@@ -22,15 +22,18 @@ public class UserDbStorage implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
 
     public UserDbStorage(JdbcTemplate jdbcTemplate) {
+
         this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override
     public Map<Long, User> getUsers() {
+
         Map<Long, User> users = new HashMap<>();
         String sqlQuery = "SELECT * FROM \"USER\"";
         List<User> usersFromDb = jdbcTemplate.query(sqlQuery, this::mapRowToUser);
         for (User user : usersFromDb) {
+
             users.put(user.getId(), user);
         }
         return users;
@@ -38,6 +41,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User create(User user) {
+
         String sqlQuery = "INSERT INTO \"USER\" (EMAIL, LOGIN, BIRTHDAY, NAME) VALUES (?, ?, ?, ?)";
         jdbcTemplate.update(sqlQuery, user.getEmail(), user.getLogin(), user.getBirthday(), user.getName());
         return findUserById(user.getId());
@@ -45,6 +49,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User update(User user) {
+
         String sqlQuery = "UPDATE \"USER\" SET EMAIL = ?, LOGIN = ?, BIRTHDAY = ?, NAME = ? WHERE USER_ID = ?";
         jdbcTemplate.update(sqlQuery, user.getEmail(), user.getLogin(), user.getBirthday(), user.getName(),
                 user.getId());
@@ -53,9 +58,11 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User findUserById(long id) {
+
         String sqlQuery = "SELECT * FROM \"USER\" WHERE USER_ID = ?";
         SqlRowSet userRows = jdbcTemplate.queryForRowSet(sqlQuery, id);
         if (userRows.next()) {
+
             User user = User.builder()
                     .email(userRows.getString("EMAIL"))
                     .login(userRows.getString("LOGIN"))
@@ -71,6 +78,7 @@ public class UserDbStorage implements UserStorage {
     }
 
     private User mapRowToUser(ResultSet rs, int rowNum) throws SQLException {
+
         return User.builder()
                 .email(rs.getString("EMAIL"))
                 .login(rs.getString("LOGIN"))
@@ -82,6 +90,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public void addFriend(long userId, long friendId) {
+
         User user = findUserById(userId);
         User friend = findUserById(friendId);
         String sqlQuery = "INSERT INTO FRIENDSHIP (USER_FIRST_ID, USER_SECOND_ID) VALUES (?, ?);";
@@ -90,12 +99,14 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public void removeFromFriends(long userId, long friendId) {
+
         String sqlQuery = "DELETE FROM FRIENDSHIP WHERE USER_FIRST_ID = ? AND USER_SECOND_ID = ?;";
         jdbcTemplate.update(sqlQuery, userId, friendId);
     }
 
     @Override
     public List<User> getMutualFriends(long userId, long otherUserId) {
+
         String sqlQuery = "SELECT * FROM \"USER\" AS U WHERE U.USER_ID IN (SELECT F.USER_SECOND_ID " +
                 "FROM FRIENDSHIP AS F WHERE F.USER_FIRST_ID = ? " +
                 "INTERSECT SELECT F.USER_SECOND_ID FROM FRIENDSHIP AS F WHERE F.USER_FIRST_ID = ?);";
@@ -104,6 +115,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public List<User> getAllFriends(long userId) {
+
         String sqlQuery = "SELECT * FROM \"USER\" AS U WHERE U.USER_ID IN " +
                 "(SELECT F.USER_SECOND_ID FROM FRIENDSHIP AS F WHERE F.USER_FIRST_ID = ?);";
         return jdbcTemplate.query(sqlQuery, this::mapRowToUser, userId);

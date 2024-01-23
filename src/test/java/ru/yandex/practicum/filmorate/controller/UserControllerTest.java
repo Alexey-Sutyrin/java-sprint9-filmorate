@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-import ru.yandex.practicum.filmorate.exeptions.ValidationException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
@@ -35,7 +35,6 @@ public class UserControllerTest {
 
     @Test
     public void shouldCreateUser() {
-
         User user = User.builder()
                 .login("Mango11")
                 .name("Melissa")
@@ -49,7 +48,6 @@ public class UserControllerTest {
 
     @Test
     public void shouldUpdateUser() {
-
         User user = User.builder()
                 .login("Mango11")
                 .name("Melissa")
@@ -72,7 +70,6 @@ public class UserControllerTest {
 
     @Test
     public void shouldCreateUserWithEmptyName() {
-
         User user = User.builder()
                 .login("Mangosteen11")
                 .email("nicestmail@mail.ru")
@@ -86,7 +83,6 @@ public class UserControllerTest {
 
     @Test
     void shouldNotPassEmailValidation() {
-
         User user = User.builder()
                 .login("Mango11")
                 .name("Melissa")
@@ -100,7 +96,6 @@ public class UserControllerTest {
 
     @Test
     public void shouldNotPassLoginValidationWithEmptyLogin() {
-
         User user = User.builder()
                 .login("")
                 .name("Melissa")
@@ -114,7 +109,6 @@ public class UserControllerTest {
 
     @Test
     public void shouldNotPassLoginValidationWithBlanksInLogin() {
-
         User user = User.builder()
                 .login(" Mango 11")
                 .name("Melissa")
@@ -128,7 +122,6 @@ public class UserControllerTest {
 
     @Test
     public void shouldNotPassBirthdayValidation() {
-
         User user = User.builder()
                 .login("Mango11")
                 .name("Melissa")
@@ -142,7 +135,6 @@ public class UserControllerTest {
 
     @Test
     public void shouldAddFriend() {
-
         User user = User.builder()
                 .login("Tango11")
                 .name("Melissa")
@@ -165,7 +157,6 @@ public class UserControllerTest {
 
     @Test
     public void shouldDeleteFriend() {
-
         User user = User.builder()
                 .login("Wind")
                 .name("Melissa")
@@ -189,7 +180,6 @@ public class UserControllerTest {
 
     @Test
     public void shouldFindMutualFriend() {
-
         User user = User.builder()
                 .login("Windy")
                 .name("Melissa")
@@ -222,7 +212,6 @@ public class UserControllerTest {
 
     @Test
     public void shouldReturnAllFriends() {
-
         User user = User.builder()
                 .login("Windy")
                 .name("Melissa")

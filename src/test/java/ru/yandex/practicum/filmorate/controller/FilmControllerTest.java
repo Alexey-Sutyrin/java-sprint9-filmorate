@@ -5,11 +5,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.service.UserService;
+
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -17,6 +19,7 @@ import javax.validation.ValidatorFactory;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -29,7 +32,6 @@ public class FilmControllerTest {
     private static Validator validator;
 
     static {
-
         ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
         validator = validatorFactory.usingContext().getValidator();
     }
@@ -38,7 +40,7 @@ public class FilmControllerTest {
     public void shouldCreateFilm() {
 
         Film film = Film.builder()
-                .name("Аквапарк")
+                .name("Акварарк")
                 .description("Путь воды")
                 .duration(192)
                 .releaseDate(LocalDate.of(2022, 12, 6))
@@ -81,19 +83,6 @@ public class FilmControllerTest {
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertEquals(1, violations.size());
     }
-
-    /* Fix @Test
-    public void shouldNotPassReleaseDateValidationInThePast() {
-        Film film1 = Film.builder()
-                .name("Аватар")
-                .description("Путь воды")
-                .duration(192)
-                .releaseDate(LocalDate.of(1722, 12, 6))
-                .mpa(new Mpa(1, "PG"))
-                .build();
-
-        assertThrows(ValidationException.class, () -> filmService.create(film1));
-    }*/
 
     @Test
     public void shouldNotPassReleaseDateValidationInTheFuture() {
@@ -171,7 +160,6 @@ public class FilmControllerTest {
 
     @Test
     public void shouldPassReleaseDateValidation() {
-
         Film film = Film.builder()
                 .name("Аватар")
                 .description("Путь воды")

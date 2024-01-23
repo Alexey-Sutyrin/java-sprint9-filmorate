@@ -21,15 +21,18 @@ public class MpaDbStorage implements MpaStorage {
     private final JdbcTemplate jdbcTemplate;
 
     public MpaDbStorage(JdbcTemplate jdbcTemplate) {
+
         this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override
     public Map<Integer, Mpa> getAllMpa() {
+
         Map<Integer, Mpa> allMpa = new HashMap<>();
         String sqlQuery = "SELECT * FROM RATING;";
         List<Mpa> mpaFromDb = jdbcTemplate.query(sqlQuery, this::mapRowToMpa);
         for (Mpa mpa : mpaFromDb) {
+
             allMpa.put(mpa.getId(), mpa);
         }
         return allMpa;
@@ -37,9 +40,11 @@ public class MpaDbStorage implements MpaStorage {
 
     @Override
     public Optional<Mpa> findMpaById(Integer id) {
+
         String sqlQuery = "SELECT * FROM RATING WHERE RATING_ID = ?";
         SqlRowSet mpaRows = jdbcTemplate.queryForRowSet(sqlQuery, id);
         if (mpaRows.next()) {
+
             Mpa mpa = new Mpa(mpaRows.getInt("RATING_ID"), mpaRows.getString("RATING_NAME"));
             log.info("Найден рейтинг с id {}", id);
             return Optional.of(mpa);
@@ -49,7 +54,7 @@ public class MpaDbStorage implements MpaStorage {
     }
 
     private Mpa mapRowToMpa(ResultSet rs, int rowNum) throws SQLException {
+
         return new Mpa(rs.getInt("RATING_ID"), rs.getString("RATING_NAME"));
     }
 }
-

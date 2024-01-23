@@ -1,24 +1,21 @@
-package ru.yandex.practicum.filmorate.service;//Fix - стандартное решение getIntersection с использованием HashSet
+package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
-import ru.yandex.practicum.filmorate.exeptions.UserDoesNotExistException;
-import ru.yandex.practicum.filmorate.exeptions.ValidationException;
+import ru.yandex.practicum.filmorate.exception.UserDoesNotExistException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 import ru.yandex.practicum.filmorate.validator.UserValidator;
 
-import javax.validation.Valid;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 @Slf4j
 @Service
-@Validated
 public class UserService {
 
     private long nextId = 1;
@@ -35,25 +32,28 @@ public class UserService {
         return Collections.unmodifiableCollection(userStorage.getUsers().values());
     }
 
-    public User create(@Valid User user) {
+    public User create(User user) {
 
-        UserValidator.validateUser(user);
         for (User registeredUser : userStorage.getUsers().values()) {
+
             if (registeredUser.getEmail().equals(user.getEmail())) {
+
                 log.warn("Пользователь с электронной почтой " + user.getEmail()
                         + " уже зарегистрирован");
                 throw new ValidationException();
             }
         }
+        UserValidator.validateUser(user);
         user.setId(getNextId());
         log.info("Добавлен новый пользователь");
         return userStorage.create(user);
     }
 
-    public User update(@Valid User user) {
+    public User update(User user) {
 
         UserValidator.validateUser(user);
         if (userStorage.findUserById(user.getId()) == null) {
+
             log.warn("Невозможно обновить пользователя");
             throw new UserDoesNotExistException();
         }
@@ -97,5 +97,4 @@ public class UserService {
 
         return nextId++;
     }
-
 }

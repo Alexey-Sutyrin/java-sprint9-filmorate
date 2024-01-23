@@ -21,7 +21,6 @@ public class GenreControllerTest {
 
     @Test
     public void getAllGenres() {
-
         Collection<Genre> genres = genreService.getAllGenres();
 
         assertEquals(6, genres.size());
@@ -29,7 +28,6 @@ public class GenreControllerTest {
 
     @Test
     public void findGenreById() {
-
         Genre genre = genreService.getGenreById(1);
 
         assertEquals("Комедия", genre.getName());

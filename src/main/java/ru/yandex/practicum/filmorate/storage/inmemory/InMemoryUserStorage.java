@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.inmemory;
 
+import com.google.common.collect.Sets;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
@@ -13,6 +14,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public Map<Long, User> getUsers() {
+
         return users;
     }
 
@@ -34,7 +36,6 @@ public class InMemoryUserStorage implements UserStorage {
     public User findUserById(long id) {
 
         if (users.containsKey(id)) {
-
             return users.get(id);
         }
         return null;
@@ -70,10 +71,13 @@ public class InMemoryUserStorage implements UserStorage {
         List<User> mutualFriends = new ArrayList<>();
         User user = findUserById(userId);
         User otherUser = findUserById(otherUserId);
-        Set<Long> mutualFriendsIds = getIntersection(user.getFriends(), otherUser.getFriends());
-        for (Long id : mutualFriendsIds) {
+        if (user != null && otherUser != null) {
 
-            mutualFriends.add(findUserById(id));
+            Set<Long> mutualFriendsIds = Sets.intersection(user.getFriends(), otherUser.getFriends());
+            for (Long id : mutualFriendsIds) {
+
+                mutualFriends.add(findUserById(id));
+            }
         }
         return mutualFriends;
     }
@@ -91,12 +95,5 @@ public class InMemoryUserStorage implements UserStorage {
             }
         }
         return friends;
-    }
-
-    private Set<Long> getIntersection(Set<Long> set1, Set<Long> set2) {
-
-        Set<Long> result = new HashSet<>(set1);
-        result.retainAll(set2);
-        return result;
     }
 }
