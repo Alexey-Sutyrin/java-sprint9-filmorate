@@ -14,10 +14,8 @@ import ru.yandex.practicum.filmorate.validator.UserValidator;
 import javax.validation.Valid;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+
 
 @Slf4j
 @Service
