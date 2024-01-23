@@ -4,18 +4,21 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 import ru.yandex.practicum.filmorate.exception.UserDoesNotExistException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 import ru.yandex.practicum.filmorate.validator.UserValidator;
 
+import javax.validation.Valid;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 @Slf4j
 @Service
+@Validated
 public class UserService {
 
     private long nextId = 1;
@@ -32,7 +35,7 @@ public class UserService {
         return Collections.unmodifiableCollection(userStorage.getUsers().values());
     }
 
-    public User create(User user) {
+    public User create(@Valid User user) {
 
         for (User registeredUser : userStorage.getUsers().values()) {
 
@@ -49,7 +52,7 @@ public class UserService {
         return userStorage.create(user);
     }
 
-    public User update(User user) {
+    public User update(@Valid User user) {
 
         UserValidator.validateUser(user);
         if (userStorage.findUserById(user.getId()) == null) {

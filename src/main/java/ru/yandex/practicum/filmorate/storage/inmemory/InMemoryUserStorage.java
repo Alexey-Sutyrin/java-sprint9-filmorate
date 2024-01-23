@@ -1,9 +1,9 @@
 package ru.yandex.practicum.filmorate.storage.inmemory;
 
-import com.google.common.collect.Sets;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
+
 
 import java.util.*;
 
@@ -67,19 +67,23 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public List<User> getMutualFriends(long userId, long otherUserId) {
-
         List<User> mutualFriends = new ArrayList<>();
         User user = findUserById(userId);
         User otherUser = findUserById(otherUserId);
-        if (user != null && otherUser != null) {
 
-            Set<Long> mutualFriendsIds = Sets.intersection(user.getFriends(), otherUser.getFriends());
-            for (Long id : mutualFriendsIds) {
+        Set<Long> mutualFriendsIds = getIntersection(user.getFriends(), otherUser.getFriends());
 
-                mutualFriends.add(findUserById(id));
-            }
+        for (Long id : mutualFriendsIds) {
+
+            mutualFriends.add(findUserById(id));
         }
         return mutualFriends;
+    }
+
+    private Set<Long> getIntersection(Set<Long> set1, Set<Long> set2) {
+        Set<Long> result = new HashSet<>(set1);
+        result.retainAll(set2);
+        return result;
     }
 
     @Override
