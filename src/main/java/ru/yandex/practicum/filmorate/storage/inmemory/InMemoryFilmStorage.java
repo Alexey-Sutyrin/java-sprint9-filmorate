@@ -29,19 +29,23 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film create(Film film) {
+
         films.put(film.getId(), film);
         return film;
     }
 
     @Override
     public Film update(Film film) {
+
         films.put(film.getId(), film);
         return film;
     }
 
     @Override
     public Film findFilmById(Long id) {
+
         if (films.containsKey(id)) {
+
             return films.get(id);
         }
         return null;
@@ -49,18 +53,21 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public void addLike(Long filmId, Long userId) {
+
         Film film = findFilmById(filmId);
         if (film != null && userStorage.findUserById(userId) != null) {
+
             findFilmById(filmId).getLikes().add(userId);
         }
     }
 
     @Override
     public void deleteLike(Long filmId, Long userId) {
+
         Film film = findFilmById(filmId);
         if (film != null && userStorage.findUserById(userId) != null) {
+
             film.getLikes().remove(userId);
         }
     }
 }
-
