@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @AutoConfigureTestDatabase
@@ -123,7 +122,8 @@ public class UserControllerTest {
                 .birthday(LocalDate.of(2000, 8, 15))
                 .build();
 
-        assertThrows(ValidationException.class, () -> userService.create(user));
+        Set<ConstraintViolation<User>> violations = validator.validate(user);
+        assertEquals(1, violations.size());
     }
 
     @Test
