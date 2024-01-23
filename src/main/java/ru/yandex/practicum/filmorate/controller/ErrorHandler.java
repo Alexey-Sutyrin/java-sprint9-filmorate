@@ -37,6 +37,7 @@ public class ErrorHandler {
 
         return new ErrorResponse("Жанр не найден");
     }
+    
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleUserNotFound(UserDoesNotExistException e) {
