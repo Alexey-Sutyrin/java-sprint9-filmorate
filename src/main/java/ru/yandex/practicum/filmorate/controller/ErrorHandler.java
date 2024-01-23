@@ -23,7 +23,6 @@ public class ErrorHandler {
         return new ErrorResponse("Фильм не найден");
     }
 
-
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleMpaNotFound(MpaDoesNotExistException e) {
@@ -37,7 +36,7 @@ public class ErrorHandler {
 
         return new ErrorResponse("Жанр не найден");
     }
-    
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleUserNotFound(UserDoesNotExistException e) {
@@ -53,5 +52,3 @@ public class ErrorHandler {
     }
 
 }
-
-
