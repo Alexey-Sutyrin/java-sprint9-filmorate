@@ -96,5 +96,3 @@ public class FilmService {
         return nextId++;
     }
 }
-
-

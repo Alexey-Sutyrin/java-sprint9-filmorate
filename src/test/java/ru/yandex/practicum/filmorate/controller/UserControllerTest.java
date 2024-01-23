@@ -137,24 +137,3 @@ public class UserControllerTest {
         assertEquals(1, violations.size());
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
