@@ -1,16 +1,9 @@
 package ru.yandex.practicum.filmorate.storage.inmemory;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
-import ru.yandex.practicum.filmorate.exeptions.UserDoesNotExistException;
-import ru.yandex.practicum.filmorate.exeptions.ValidationException;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import javax.validation.Valid;
 import java.util.*;
 
 @Component("inMemoryUserStorage")
