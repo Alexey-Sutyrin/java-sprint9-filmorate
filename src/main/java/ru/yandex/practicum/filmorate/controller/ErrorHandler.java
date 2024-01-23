@@ -4,9 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.yandex.practicum.filmorate.exeptions.FilmDoesNotExistException;
-import ru.yandex.practicum.filmorate.exeptions.UserDoesNotExistException;
-import ru.yandex.practicum.filmorate.exeptions.ValidationException;
+import ru.yandex.practicum.filmorate.exeptions.*;
 
 @RestControllerAdvice(basePackages = "ru.yandex.practicum.filmorate")
 public class ErrorHandler {
@@ -25,6 +23,20 @@ public class ErrorHandler {
         return new ErrorResponse("Фильм не найден");
     }
 
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleMpaNotFound(MpaDoesNotExistException e) {
+
+        return new ErrorResponse("Рейтинг не найден");
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleGenreNotFound(GenreDoesNotExistException e) {
+
+        return new ErrorResponse("Жанр не найден");
+    }
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleUserNotFound(UserDoesNotExistException e) {
@@ -38,6 +50,7 @@ public class ErrorHandler {
 
         return new ErrorResponse("Произошла непредвиденная ошибка.");
     }
+
 }
 
 

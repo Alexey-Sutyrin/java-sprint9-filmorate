@@ -1,8 +1,8 @@
-package ru.yandex.practicum.filmorate.service;//Fix - Guava из POM.xml использовалась для
-//Sets.intersection, и только там.Заменил на стандартное решение getIntersection с использованием HashSet, guava из POM.xml убрал
+package ru.yandex.practicum.filmorate.service;//Fix - стандартное решение getIntersection с использованием HashSet
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import ru.yandex.practicum.filmorate.exeptions.UserDoesNotExistException;
@@ -12,6 +12,8 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 import ru.yandex.practicum.filmorate.validator.UserValidator;
 
 import javax.validation.Valid;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -26,14 +28,14 @@ public class UserService {
     private final UserStorage userStorage;
 
     @Autowired
-    public UserService(UserStorage userStorage) {
+    public UserService(@Qualifier("userDbStorage") UserStorage userStorage) {
 
         this.userStorage = userStorage;
     }
 
-    public List<User> getUsers() {
+    public Collection<User> getUsers() {
 
-        return List.copyOf(userStorage.getUsers().values());
+        return Collections.unmodifiableCollection(userStorage.getUsers().values());
     }
 
     public User create(@Valid User user) {
@@ -41,15 +43,12 @@ public class UserService {
         UserValidator.validateUser(user);
         for (User registeredUser : userStorage.getUsers().values()) {
             if (registeredUser.getEmail().equals(user.getEmail())) {
-                log.warn("Пользователь с e-mail адресом " + user.getEmail() + " уже зарегистрирован");
+                log.warn("Пользователь с электронной почтой " + user.getEmail()
+                        + " уже зарегистрирован");
                 throw new ValidationException();
             }
         }
-
         user.setId(getNextId());
-        if (user.getName() == null || user.getName().isBlank() || user.getName().isEmpty()) {
-            user.setName(user.getLogin());
-        }
         log.info("Добавлен новый пользователь");
         return userStorage.create(user);
     }
@@ -65,12 +64,10 @@ public class UserService {
         return userStorage.update(user);
     }
 
-
     public User findUserById(long id) {
 
         User user = userStorage.findUserById(id);
         if (user == null) {
-
             log.warn("Пользователя с id {} не найдено", id);
             throw new UserDoesNotExistException();
         }
@@ -79,51 +76,24 @@ public class UserService {
 
     public void addFriend(long userId, long friendId) {
 
-        User user = findUserById(userId);
-        User friend = findUserById(friendId);
-        if (user != null && friend != null) {
-
-            user.getFriends().add(friendId);
-            friend.getFriends().add(userId);
-            log.info("Пользователи {} и {} теперь друзья", user, friend);
-        }
+        userStorage.addFriend(userId, friendId);
+        log.info("Пользователи с id {} и {} теперь друзья", userId, friendId);
     }
 
     public void removeFromFriends(long userId, long friendId) {
 
-        User user = findUserById(userId);
-        User friend = findUserById(friendId);
-        if (user != null && friend != null) {
-
-            user.getFriends().remove(friend);
-            friend.getFriends().remove(user);
-            log.info("Пользователи {} и {} теперь не являются друзьями", user, friend);
-        }
+        userStorage.removeFromFriends(userId, friendId);
+        log.info("Пользователи с id {} и {} теперь не являются друзьями", userId, friendId);
     }
 
     public List<User> getMutualFriends(long userId, long otherUserId) {
 
-        List<User> mutualFriends = new ArrayList<>();
-        User user = findUserById(userId);
-        User otherUser = findUserById(otherUserId);
-        Set<Long> mutualFriendsIds = getIntersection(user.getFriends(), otherUser.getFriends());
-        for (Long id : mutualFriendsIds) {
-
-            mutualFriends.add(findUserById(id));
-        }
-
-        return mutualFriends;
+        return userStorage.getMutualFriends(userId, otherUserId);
     }
 
     public List<User> getAllFriends(long userId) {
 
-        List<User> friends = new ArrayList<>();
-        User user = findUserById(userId);
-        for (Long id : user.getFriends()) {
-
-            friends.add(findUserById(id));
-        }
-        return friends;
+        return userStorage.getAllFriends(userId);
     }
 
     private long getNextId() {
@@ -131,10 +101,4 @@ public class UserService {
         return nextId++;
     }
 
-    private Set<Long> getIntersection(Set<Long> set1, Set<Long> set2) {
-
-        Set<Long> result = new HashSet<>(set1);
-        result.retainAll(set2);
-        return result;
-    }
 }

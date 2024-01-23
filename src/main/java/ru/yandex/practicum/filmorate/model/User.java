@@ -18,9 +18,9 @@ public class User {
     @Email(message = "Адрес e-mail введен некорректно")
     private final String email;
     @Pattern(regexp = "^\\w+$", message = "Логин не может быть пустым или содержать пробелы")
-    private final String login;
+    private final String login; //fixed
     @NotNull
     @PastOrPresent(message = "День рождения не может быть в будущем")
-    private final LocalDate birthday;
+    private final LocalDate birthday; //fixed
     private String name;
 }

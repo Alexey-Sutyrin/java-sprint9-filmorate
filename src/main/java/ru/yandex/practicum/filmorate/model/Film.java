@@ -14,6 +14,7 @@ import java.util.Set;
 public class Film {
 
     private final Set<Long> likes = new HashSet<>();
+    private final Set<Genre> genres = new HashSet<>();
     private Long id;
     @NotBlank(message = "Название фильма не может быть пустым")
     private final String name;
@@ -26,4 +27,6 @@ public class Film {
     @Positive(message = "Продолжительность фильма не может быть отрицательной")
     @NotNull
     private final Integer duration;
+    @NotNull
+    private final Mpa mpa;
 }
