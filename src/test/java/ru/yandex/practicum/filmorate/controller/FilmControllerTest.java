@@ -5,13 +5,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-import ru.yandex.practicum.filmorate.exeptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.service.UserService;
-
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -19,26 +17,28 @@ import javax.validation.ValidatorFactory;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class FilmControllerTest {
+
     private final FilmService filmService;
     private final UserService userService;
     private static Validator validator;
 
     static {
+
         ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
         validator = validatorFactory.usingContext().getValidator();
     }
 
     @Test
     public void shouldCreateFilm() {
+
         Film film = Film.builder()
-                .name("Акварарк")
+                .name("Аквапарк")
                 .description("Путь воды")
                 .duration(192)
                 .releaseDate(LocalDate.of(2022, 12, 6))
@@ -51,6 +51,7 @@ public class FilmControllerTest {
 
     @Test
     public void shouldNotPassNameValidation() {
+
         Film film = Film.builder()
                 .name("")
                 .description("Уже не путь воды")
@@ -65,6 +66,7 @@ public class FilmControllerTest {
 
     @Test
     public void shouldNotPassDescriptionValidation() {
+
         Film film = Film.builder()
                 .name("Аватар")
                 .description("«Аватар: Путь воды» (англ. Avatar: The Way of Water) — американский " +
@@ -95,6 +97,7 @@ public class FilmControllerTest {
 
     @Test
     public void shouldNotPassReleaseDateValidationInTheFuture() {
+
         Film film = Film.builder()
                 .name("Аватар")
                 .description("Путь воды")
@@ -109,6 +112,7 @@ public class FilmControllerTest {
 
     @Test
     public void shouldNotPassDurationValidation() {
+
         Film film = Film.builder()
                 .name("Аватар")
                 .description("Путь воды")
@@ -123,6 +127,7 @@ public class FilmControllerTest {
 
     @Test
     public void shouldUpdateFilm() {
+
         Film film = Film.builder()
                 .name("Аватар")
                 .description("Путь воды")
@@ -148,6 +153,7 @@ public class FilmControllerTest {
 
     @Test
     public void shouldPassDescriptionValidationWith200Symbols() {
+
         Film film = Film.builder()
                 .name("Аватар")
                 .description("«Аватар: Путь воды» (англ. Avatar: The Way of Water) — американский " +
@@ -165,6 +171,7 @@ public class FilmControllerTest {
 
     @Test
     public void shouldPassReleaseDateValidation() {
+
         Film film = Film.builder()
                 .name("Аватар")
                 .description("Путь воды")
@@ -179,6 +186,7 @@ public class FilmControllerTest {
 
     @Test
     public void shouldFindFilmById() {
+
         Film film = Film.builder()
                 .name("Аватар 2")
                 .description("Путь воды")
@@ -193,6 +201,7 @@ public class FilmControllerTest {
 
     @Test
     public void shouldAddLike() {
+
         User user = User.builder()
                 .login("Iris")
                 .name("Melissa")
@@ -217,6 +226,7 @@ public class FilmControllerTest {
 
     @Test
     public void shouldDeleteLike() {
+
         User user = User.builder()
                 .login("Iris")
                 .name("Melissa")
@@ -242,6 +252,7 @@ public class FilmControllerTest {
 
     @Test
     public void shouldGetMostPopularFilms() {
+
         User user = User.builder()
                 .login("Iris")
                 .name("Melissa")
