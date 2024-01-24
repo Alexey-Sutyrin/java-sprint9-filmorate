@@ -24,7 +24,7 @@ public class GenreService {
 
     public Collection<Genre> getAllGenres() {
 
-        return Collections.unmodifiableCollection(genreStorage.getAllGenres().values());
+        return Collections.unmodifiableCollection(genreStorage.getAllGenres());
     }
 
     public Genre getGenreById(int id) {
