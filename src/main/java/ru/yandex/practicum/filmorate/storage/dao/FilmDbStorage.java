@@ -42,7 +42,6 @@ public class FilmDbStorage implements FilmStorage {
         String sqlQuery = "SELECT * FROM FILM AS F JOIN RATING AS R ON F.RATING_ID = R.RATING_ID;";
         List<Film> filmsFromDb = jdbcTemplate.query(sqlQuery, this::mapRowToFilm);
         for (Film film : filmsFromDb) {
-
             films.put(film.getId(), film);
         }
         return films;
@@ -57,9 +56,7 @@ public class FilmDbStorage implements FilmStorage {
         jdbcTemplate.update(sqlQuery, film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration(),
                 film.getMpa().getId());
         if (!film.getGenres().isEmpty()) {
-
             for (Genre genre : film.getGenres()) {
-
                 jdbcTemplate.update(queryForFilmGenre, film.getId(), genre.getId());
             }
         }
@@ -77,9 +74,7 @@ public class FilmDbStorage implements FilmStorage {
                 film.getMpa().getId(), film.getDuration(), film.getId());
         jdbcTemplate.update(queryToDeleteFilmGenres, film.getId());
         if (!film.getGenres().isEmpty()) {
-
             for (Genre genre : film.getGenres()) {
-
                 jdbcTemplate.update(queryForUpdateGenre, film.getId(), genre.getId());
             }
         }
@@ -93,7 +88,6 @@ public class FilmDbStorage implements FilmStorage {
                 "WHERE FILM_ID = ?;";
         SqlRowSet filmRows = jdbcTemplate.queryForRowSet(sqlQuery, id);
         if (filmRows.next()) {
-
             Film film = Film.builder()
                     .id(filmRows.getLong("FILM_ID"))
                     .name(filmRows.getString("NAME"))
@@ -105,11 +99,9 @@ public class FilmDbStorage implements FilmStorage {
             List<Genre> genresOfFilm = getGenresOfFilm(id);
             List<Integer> likes = getLikesOfFilm(film.getId());
             for (Genre genre : genresOfFilm) {
-
                 film.getGenres().add(genre);
             }
             for (Integer like : likes) {
-
                 film.getLikes().add(Long.valueOf(like));
             }
             log.info("Найден фильм с id {}", id);
@@ -132,11 +124,9 @@ public class FilmDbStorage implements FilmStorage {
         List<Genre> genresOfFilm = getGenresOfFilm(film.getId());
         List<Integer> likes = getLikesOfFilm(film.getId());
         for (Genre genre : genresOfFilm) {
-
             film.getGenres().add(genre);
         }
         for (Integer like : likes) {
-
             film.getLikes().add(Long.valueOf(like));
         }
 
