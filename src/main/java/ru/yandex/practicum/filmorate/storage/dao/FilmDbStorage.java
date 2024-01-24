@@ -34,6 +34,7 @@ public class FilmDbStorage implements FilmStorage {
         this.jdbcTemplate = jdbcTemplate;
         this.userStorage = userStorage;
     }
+
     private Film mapRowToFilm(ResultSet rs, int rowNum) throws SQLException {
 
         Film film = Film.builder()
@@ -47,15 +48,19 @@ public class FilmDbStorage implements FilmStorage {
 
         return film;
     }
+
     private void enrichFilm(Film film) {
+
         List<Genre> genresOfFilm = getGenresOfFilm(film.getId());
         List<Integer> likes = getLikesOfFilm(film.getId());
 
         film.setGenres(genresOfFilm);
         film.setLikes(likes.stream().map(Long::valueOf).collect(Collectors.toList()));
     }
+
     @Override
     public List<Film> getFilms() {
+
         String sqlQuery = "SELECT * FROM FILM AS F JOIN RATING AS R ON F.RATING_ID = R.RATING_ID;";
         return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> {
             Film film = mapRowToFilm(rs, rowNum);
@@ -88,6 +93,7 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film update(Film film) {
+
         String sqlUpdateFilm = "UPDATE FILM SET NAME = ?, DESCRIPTION = ?, RELEASE_DATE = ?, RATING_ID = ?, DURATION = ?" +
                 " WHERE FILM_ID = ?;";
 
@@ -100,18 +106,15 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     private void updateFilmGenres(Film film) {
+
         String sqlDeleteFilmGenres = "DELETE FROM FILM_GENRE WHERE FILM_ID = ?;";
         String sqlInsertFilmGenre = "INSERT INTO FILM_GENRE (FILM_ID, GENRE_ID) VALUES (?, ?);";
-
         jdbcTemplate.update(sqlDeleteFilmGenres, film.getId());
-
         if (!film.getGenres().isEmpty()) {
             List<Object[]> batchArgs = new ArrayList<>();
-
             for (Genre genre : film.getGenres()) {
                 batchArgs.add(new Object[]{film.getId(), genre.getId()});
             }
-
             jdbcTemplate.batchUpdate(sqlInsertFilmGenre, batchArgs);
         }
     }
@@ -155,7 +158,6 @@ public class FilmDbStorage implements FilmStorage {
         String queryForFilmLikes = "SELECT USER_ID FROM FILM_LIKE WHERE FILM_ID = ?;";
         return jdbcTemplate.query(queryForFilmLikes, this::mapRowToLike, filmId);
     }
-
 
     private Genre mapRowToGenre(ResultSet rs, int rowNum) throws SQLException {
 
