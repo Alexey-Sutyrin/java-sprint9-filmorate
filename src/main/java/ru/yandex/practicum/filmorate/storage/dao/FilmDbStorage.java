@@ -19,6 +19,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component("filmDbStorage")
@@ -33,14 +34,35 @@ public class FilmDbStorage implements FilmStorage {
         this.jdbcTemplate = jdbcTemplate;
         this.userStorage = userStorage;
     }
+    private Film mapRowToFilm(ResultSet rs, int rowNum) throws SQLException {
 
+        Film film = Film.builder()
+                .id(rs.getLong("FILM_ID"))
+                .name(rs.getString("NAME"))
+                .description(rs.getString("DESCRIPTION"))
+                .releaseDate(rs.getDate("RELEASE_DATE").toLocalDate())
+                .duration(rs.getInt("DURATION"))
+                .mpa(new Mpa(rs.getInt("RATING_ID"), rs.getString("RATING_NAME")))
+                .build();
 
+        return film;
+    }
+    private void enrichFilm(Film film) {
+        List<Genre> genresOfFilm = getGenresOfFilm(film.getId());
+        List<Integer> likes = getLikesOfFilm(film.getId());
+
+        film.setGenres(genresOfFilm);
+        film.setLikes(likes.stream().map(Long::valueOf).collect(Collectors.toList()));
+    }
     @Override
     public List<Film> getFilms() {
         String sqlQuery = "SELECT * FROM FILM AS F JOIN RATING AS R ON F.RATING_ID = R.RATING_ID;";
-        return jdbcTemplate.query(sqlQuery, this::mapRowToFilm);
+        return jdbcTemplate.query(sqlQuery, (rs, rowNum) -> {
+            Film film = mapRowToFilm(rs, rowNum);
+            enrichFilm(film);
+            return film;
+        });
     }
-
 
     @Override
     public Film create(Film film) {
@@ -123,28 +145,17 @@ public class FilmDbStorage implements FilmStorage {
         log.warn("Фильм с id {} не найден", id);
         throw new FilmDoesNotExistException();
     }
-
-    private Film mapRowToFilm(ResultSet rs, int rowNum) throws SQLException {
-
-        Film film = Film.builder()
-                .id(rs.getLong("FILM_ID"))
-                .name(rs.getString("NAME"))
-                .description(rs.getString("DESCRIPTION"))
-                .releaseDate(rs.getDate("RELEASE_DATE").toLocalDate())
-                .duration(rs.getInt("DURATION"))
-                .mpa(new Mpa(rs.getInt("RATING_ID"), rs.getString("RATING_NAME")))
-                .build();
-        List<Genre> genresOfFilm = getGenresOfFilm(film.getId());
-        List<Integer> likes = getLikesOfFilm(film.getId());
-        for (Genre genre : genresOfFilm) {
-            film.getGenres().add(genre);
-        }
-        for (Integer like : likes) {
-            film.getLikes().add(Long.valueOf(like));
-        }
-
-        return film;
+    private List<Genre> getGenresOfFilmFromDB(long filmId) {
+        String queryForFilmGenres = "SELECT FG.FILM_ID, FG.GENRE_ID, G.GENRE_NAME FROM FILM_GENRE FG" +
+                " JOIN GENRE G ON G.GENRE_ID = FG.GENRE_ID WHERE FILM_ID = ?;";
+        return jdbcTemplate.query(queryForFilmGenres, this::mapRowToGenre, filmId);
     }
+
+    private List<Integer> getLikesOfFilmFromDB(long filmId) {
+        String queryForFilmLikes = "SELECT USER_ID FROM FILM_LIKE WHERE FILM_ID = ?;";
+        return jdbcTemplate.query(queryForFilmLikes, this::mapRowToLike, filmId);
+    }
+
 
     private Genre mapRowToGenre(ResultSet rs, int rowNum) throws SQLException {
 
