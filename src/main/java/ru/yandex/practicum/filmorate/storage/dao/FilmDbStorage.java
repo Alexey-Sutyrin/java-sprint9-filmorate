@@ -44,17 +44,23 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film create(Film film) {
-
         String sqlQuery = "INSERT INTO FILM (NAME, DESCRIPTION, RELEASE_DATE, DURATION, RATING_ID) " +
                 "VALUES (?, ?, ?, ?, ?);";
         String queryForFilmGenre = "INSERT INTO FILM_GENRE (FILM_ID, GENRE_ID) VALUES (?, ?);";
+
         jdbcTemplate.update(sqlQuery, film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration(),
                 film.getMpa().getId());
+
         if (!film.getGenres().isEmpty()) {
+            List<Object[]> batchValues = new ArrayList<>();
+
             for (Genre genre : film.getGenres()) {
-                jdbcTemplate.update(queryForFilmGenre, film.getId(), genre.getId());
+                batchValues.add(new Object[]{film.getId(), genre.getId()});
             }
+
+            jdbcTemplate.batchUpdate(queryForFilmGenre, batchValues);
         }
+
         return findFilmById(film.getId());
     }
 
