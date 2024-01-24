@@ -68,7 +68,6 @@ public class InMemoryFilmStorage implements FilmStorage {
 
         Film film = findFilmById(filmId);
         if (film != null && userStorage.findUserById(userId) != null) {
-
             film.getLikes().remove(userId);
         }
     }
