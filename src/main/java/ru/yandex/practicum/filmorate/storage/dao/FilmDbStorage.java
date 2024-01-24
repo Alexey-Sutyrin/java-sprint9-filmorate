@@ -123,13 +123,14 @@ public class FilmDbStorage implements FilmStorage {
                 .duration(rs.getInt("DURATION"))
                 .mpa(new Mpa(rs.getInt("RATING_ID"), rs.getString("RATING_NAME")))
                 .build();
-
-        // Получаем данные о жанрах и лайках из текущего ResultSet, без дополнительных запросов к БД
-        Genre genre = new Genre(rs.getInt("GENRE_ID"), rs.getString("GENRE_NAME"));
-        film.getGenres().add(genre);
-
-        Integer like = rs.getInt("USER_ID");
-        film.getLikes().add(Long.valueOf(like));
+        List<Genre> genresOfFilm = getGenresOfFilm(film.getId());
+        List<Integer> likes = getLikesOfFilm(film.getId());
+        for (Genre genre : genresOfFilm) {
+            film.getGenres().add(genre);
+        }
+        for (Integer like : likes) {
+            film.getLikes().add(Long.valueOf(like));
+        }
 
         return film;
     }
