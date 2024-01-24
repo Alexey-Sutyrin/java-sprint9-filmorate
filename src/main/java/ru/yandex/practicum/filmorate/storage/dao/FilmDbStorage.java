@@ -16,9 +16,7 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 @Slf4j
@@ -35,17 +33,13 @@ public class FilmDbStorage implements FilmStorage {
         this.userStorage = userStorage;
     }
 
-    @Override
-    public Map<Long, Film> getFilms() {
 
-        Map<Long, Film> films = new HashMap<>();
+    @Override
+    public List<Film> getFilms() {
         String sqlQuery = "SELECT * FROM FILM AS F JOIN RATING AS R ON F.RATING_ID = R.RATING_ID;";
-        List<Film> filmsFromDb = jdbcTemplate.query(sqlQuery, this::mapRowToFilm);
-        for (Film film : filmsFromDb) {
-            films.put(film.getId(), film);
-        }
-        return films;
+        return jdbcTemplate.query(sqlQuery, this::mapRowToFilm);
     }
+
 
     @Override
     public Film create(Film film) {

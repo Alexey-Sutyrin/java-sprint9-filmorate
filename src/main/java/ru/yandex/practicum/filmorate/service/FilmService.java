@@ -31,8 +31,7 @@ public class FilmService {
     }
 
     public Collection<Film> getFilms() {
-
-        return Collections.unmodifiableCollection(filmStorage.getFilms().values());
+        return Collections.unmodifiableCollection(filmStorage.getFilms());
     }
 
     public Film create(@Valid Film film) {
@@ -76,8 +75,7 @@ public class FilmService {
     }
 
     public List<Film> getMostPopularFilms(int count) {
-
-        return filmStorage.getFilms().values().stream()
+        return filmStorage.getFilms().stream()
                 .sorted((f1, f2) -> f2.getLikes().size() - f1.getLikes().size())
                 .limit(count)
                 .collect(Collectors.toList());
