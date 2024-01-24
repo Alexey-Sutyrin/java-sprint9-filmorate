@@ -148,13 +148,16 @@ public class FilmDbStorage implements FilmStorage {
         log.warn("Фильм с id {} не найден", id);
         throw new FilmDoesNotExistException();
     }
+
     private List<Genre> getGenresOfFilmFromDB(long filmId) {
+
         String queryForFilmGenres = "SELECT FG.FILM_ID, FG.GENRE_ID, G.GENRE_NAME FROM FILM_GENRE FG" +
                 " JOIN GENRE G ON G.GENRE_ID = FG.GENRE_ID WHERE FILM_ID = ?;";
         return jdbcTemplate.query(queryForFilmGenres, this::mapRowToGenre, filmId);
     }
 
     private List<Integer> getLikesOfFilmFromDB(long filmId) {
+
         String queryForFilmLikes = "SELECT USER_ID FROM FILM_LIKE WHERE FILM_ID = ?;";
         return jdbcTemplate.query(queryForFilmLikes, this::mapRowToLike, filmId);
     }
