@@ -59,20 +59,28 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film update(Film film) {
-
-        String sqlQuery = "UPDATE FILM SET NAME = ?, DESCRIPTION = ?, RELEASE_DATE = ?, RATING_ID = ?, DURATION = ?" +
+        String sqlUpdateFilm = "UPDATE FILM SET NAME = ?, DESCRIPTION = ?, RELEASE_DATE = ?, RATING_ID = ?, DURATION = ?" +
                 " WHERE FILM_ID = ?;";
-        String queryToDeleteFilmGenres = "DELETE FROM FILM_GENRE WHERE FILM_ID = ?;";
-        String queryForUpdateGenre = "INSERT INTO FILM_GENRE (FILM_ID, GENRE_ID) VALUES (?, ?);";
-        jdbcTemplate.update(sqlQuery, film.getName(), film.getDescription(), film.getReleaseDate(),
+
+        jdbcTemplate.update(sqlUpdateFilm, film.getName(), film.getDescription(), film.getReleaseDate(),
                 film.getMpa().getId(), film.getDuration(), film.getId());
-        jdbcTemplate.update(queryToDeleteFilmGenres, film.getId());
+
+        updateFilmGenres(film);
+
+        return findFilmById(film.getId());
+    }
+
+    private void updateFilmGenres(Film film) {
+        String sqlDeleteFilmGenres = "DELETE FROM FILM_GENRE WHERE FILM_ID = ?;";
+        String sqlInsertFilmGenre = "INSERT INTO FILM_GENRE (FILM_ID, GENRE_ID) VALUES (?, ?);";
+
+        jdbcTemplate.update(sqlDeleteFilmGenres, film.getId());
+
         if (!film.getGenres().isEmpty()) {
             for (Genre genre : film.getGenres()) {
-                jdbcTemplate.update(queryForUpdateGenre, film.getId(), genre.getId());
+                jdbcTemplate.update(sqlInsertFilmGenre, film.getId(), genre.getId());
             }
         }
-        return findFilmById(film.getId());
     }
 
     @Override
