@@ -33,12 +33,13 @@ public class FilmDbStorage implements FilmStorage {
         this.userStorage = userStorage;
     }
 
+
     @Override
     public List<Film> getFilms() {
-
         String sqlQuery = "SELECT * FROM FILM AS F JOIN RATING AS R ON F.RATING_ID = R.RATING_ID;";
         return jdbcTemplate.query(sqlQuery, this::mapRowToFilm);
     }
+
 
     @Override
     public Film create(Film film) {
@@ -58,20 +59,23 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film update(Film film) {
-
         String sqlUpdateFilm = "UPDATE FILM SET NAME = ?, DESCRIPTION = ?, RELEASE_DATE = ?, RATING_ID = ?, DURATION = ?" +
                 " WHERE FILM_ID = ?;";
+
         jdbcTemplate.update(sqlUpdateFilm, film.getName(), film.getDescription(), film.getReleaseDate(),
                 film.getMpa().getId(), film.getDuration(), film.getId());
+
         updateFilmGenres(film);
+
         return findFilmById(film.getId());
     }
 
     private void updateFilmGenres(Film film) {
-
         String sqlDeleteFilmGenres = "DELETE FROM FILM_GENRE WHERE FILM_ID = ?;";
         String sqlInsertFilmGenre = "INSERT INTO FILM_GENRE (FILM_ID, GENRE_ID) VALUES (?, ?);";
+
         jdbcTemplate.update(sqlDeleteFilmGenres, film.getId());
+
         if (!film.getGenres().isEmpty()) {
             for (Genre genre : film.getGenres()) {
                 jdbcTemplate.update(sqlInsertFilmGenre, film.getId(), genre.getId());
@@ -119,14 +123,13 @@ public class FilmDbStorage implements FilmStorage {
                 .duration(rs.getInt("DURATION"))
                 .mpa(new Mpa(rs.getInt("RATING_ID"), rs.getString("RATING_NAME")))
                 .build();
-        List<Genre> genresOfFilm = getGenresOfFilm(film.getId());
-        List<Integer> likes = getLikesOfFilm(film.getId());
-        for (Genre genre : genresOfFilm) {
-            film.getGenres().add(genre);
-        }
-        for (Integer like : likes) {
-            film.getLikes().add(Long.valueOf(like));
-        }
+
+        // Получаем данные о жанрах и лайках из текущего ResultSet, без дополнительных запросов к БД
+        Genre genre = new Genre(rs.getInt("GENRE_ID"), rs.getString("GENRE_NAME"));
+        film.getGenres().add(genre);
+
+        Integer like = rs.getInt("USER_ID");
+        film.getLikes().add(Long.valueOf(like));
 
         return film;
     }
