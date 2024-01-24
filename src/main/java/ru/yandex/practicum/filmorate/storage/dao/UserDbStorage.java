@@ -56,25 +56,18 @@ public class UserDbStorage implements UserStorage {
         return findUserById(user.getId());
     }
 
-    @Override
+    @Override //Замена на Mapper
     public User findUserById(long id) {
-
         String sqlQuery = "SELECT * FROM \"USER\" WHERE USER_ID = ?";
-        SqlRowSet userRows = jdbcTemplate.queryForRowSet(sqlQuery, id);
-        if (userRows.next()) {
-
-            User user = User.builder()
-                    .email(userRows.getString("EMAIL"))
-                    .login(userRows.getString("LOGIN"))
-                    .name(userRows.getString("NAME"))
-                    .id(userRows.getLong("USER_ID"))
-                    .birthday((Objects.requireNonNull(userRows.getDate("BIRTHDAY"))).toLocalDate())
+        return jdbcTemplate.queryForObject(sqlQuery, (rs, rowNum) -> {
+            return User.builder()
+                    .email(rs.getString("EMAIL"))
+                    .login(rs.getString("LOGIN"))
+                    .name(rs.getString("NAME"))
+                    .id(rs.getLong("USER_ID"))
+                    .birthday((Objects.requireNonNull(rs.getDate("BIRTHDAY"))).toLocalDate())
                     .build();
-            log.info("Найден пользователь с id {}", id);
-            return user;
-        }
-        log.warn("Пользователь с id {} не найден", id);
-        throw new UserDoesNotExistException();
+        }, id);
     }
 
     private User mapRowToUser(ResultSet rs, int rowNum) throws SQLException {
@@ -113,7 +106,7 @@ public class UserDbStorage implements UserStorage {
         return jdbcTemplate.query(sqlQuery, this::mapRowToUser, userId, otherUserId);
     }
 
-    @Override
+    @Override //Замена на JOIN
     public List<User> getAllFriends(long userId) {
         String sqlQuery = "SELECT U.* FROM \"USER\" AS U " +
                 "JOIN FRIENDSHIP AS F ON U.USER_ID = F.USER_SECOND_ID " +
