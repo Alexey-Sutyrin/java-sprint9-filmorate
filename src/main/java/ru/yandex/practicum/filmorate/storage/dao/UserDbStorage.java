@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.dao;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
@@ -11,7 +12,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+//import java.util.Objects;
 
 @Slf4j
 @Component("userDbStorage")
@@ -54,18 +55,10 @@ public class UserDbStorage implements UserStorage {
         return findUserById(user.getId());
     }
 
-    @Override //Замена на Mapper
+    @Override
     public User findUserById(long id) {
         String sqlQuery = "SELECT * FROM \"USER\" WHERE USER_ID = ?";
-        return jdbcTemplate.queryForObject(sqlQuery, (rs, rowNum) -> {
-            return User.builder()
-                    .email(rs.getString("EMAIL"))
-                    .login(rs.getString("LOGIN"))
-                    .name(rs.getString("NAME"))
-                    .id(rs.getLong("USER_ID"))
-                    .birthday((Objects.requireNonNull(rs.getDate("BIRTHDAY"))).toLocalDate())
-                    .build();
-        }, id);
+        return jdbcTemplate.queryForObject(sqlQuery, new BeanPropertyRowMapper<>(User.class), id);
     }
 
     private User mapRowToUser(ResultSet rs, int rowNum) throws SQLException {
