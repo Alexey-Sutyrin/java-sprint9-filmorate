@@ -19,6 +19,7 @@ import java.util.Collection;
 public class MpaController {
 
     private final MpaService mpaService;
+
     @Autowired
     public MpaController(MpaService mpaService) {
 

@@ -19,6 +19,7 @@ import java.util.Collection;
 public class GenreController {
 
     private final GenreService genreService;
+
     @Autowired
     public GenreController(GenreService genreService) {
 
