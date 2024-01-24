@@ -14,10 +14,10 @@ public class User {
 
     private final Set<Long> friends = new HashSet<>();
     private Long id;
-    @NotNull
+    @NotBlank(message = "Адрес e-mail не может быть пустым")
     @Email(message = "Адрес электронной почты введен некорректно")
     private final String email;
-    @NotEmpty(message = "Логин не может быть пустым")
+    @NotBlank(message = "Логин не может быть пустым")
     private final String login;
     @NotNull
     @PastOrPresent(message = "День рождения не может быть в будущем")
