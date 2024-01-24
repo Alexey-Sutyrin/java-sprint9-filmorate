@@ -43,19 +43,18 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film create(Film film) {
-        String sqlInsertFilm = "INSERT INTO FILM (NAME, DESCRIPTION, RELEASE_DATE, DURATION, RATING_ID) VALUES (?, ?, ?, ?, ?);";
-        String sqlInsertFilmGenre = "INSERT INTO FILM_GENRE (FILM_ID, GENRE_ID) VALUES (?, ?);";
-        // Параметры для вставки в таблицу FILM
-        Object[] filmParams = {film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration(), film.getMpa().getId()};
-        jdbcTemplate.update(sqlInsertFilm, filmParams);
-        Long filmId = jdbcTemplate.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
-        // Параметры для вставки в таблицу FILM_GENRE
-        List<Object[]> batchParams = film.getGenres().stream()
-                .map(genre -> new Object[]{filmId, genre.getId()})
-                .collect(Collectors.toList());
-        // Пакетная вставка данных в таблицу FILM_GENRE
-        jdbcTemplate.batchUpdate(sqlInsertFilmGenre, batchParams);
-        return findFilmById(filmId);
+
+        String sqlQuery = "INSERT INTO FILM (NAME, DESCRIPTION, RELEASE_DATE, DURATION, RATING_ID) " +
+                "VALUES (?, ?, ?, ?, ?);";
+        String queryForFilmGenre = "INSERT INTO FILM_GENRE (FILM_ID, GENRE_ID) VALUES (?, ?);";
+        jdbcTemplate.update(sqlQuery, film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration(),
+                film.getMpa().getId());
+        if (!film.getGenres().isEmpty()) {
+            for (Genre genre : film.getGenres()) {
+                jdbcTemplate.update(queryForFilmGenre, film.getId(), genre.getId());
+            }
+        }
+        return findFilmById(film.getId());
     }
 
     @Override
