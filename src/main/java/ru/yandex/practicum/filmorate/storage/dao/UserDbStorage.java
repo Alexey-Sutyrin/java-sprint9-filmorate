@@ -1,8 +1,9 @@
 package ru.yandex.practicum.filmorate.storage.dao;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.rowset.SqlRowSet;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.UserDoesNotExistException;
 import ru.yandex.practicum.filmorate.model.User;
@@ -10,20 +11,18 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Slf4j
 @Component("userDbStorage")
 public class UserDbStorage implements UserStorage {
 
     private final JdbcTemplate jdbcTemplate;
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
-    public UserDbStorage(JdbcTemplate jdbcTemplate) {
-
+    public UserDbStorage(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+        this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
     @Override
@@ -33,7 +32,6 @@ public class UserDbStorage implements UserStorage {
         String sqlQuery = "SELECT * FROM \"USER\"";
         List<User> usersFromDb = jdbcTemplate.query(sqlQuery, this::mapRowToUser);
         for (User user : usersFromDb) {
-
             users.put(user.getId(), user);
         }
         return users;
@@ -59,22 +57,14 @@ public class UserDbStorage implements UserStorage {
     @Override
     public User findUserById(long id) {
 
-        String sqlQuery = "SELECT * FROM \"USER\" WHERE USER_ID = ?";
-        SqlRowSet userRows = jdbcTemplate.queryForRowSet(sqlQuery, id);
-        if (userRows.next()) {
-
-            User user = User.builder()
-                    .email(userRows.getString("EMAIL"))
-                    .login(userRows.getString("LOGIN"))
-                    .name(userRows.getString("NAME"))
-                    .id(userRows.getLong("USER_ID"))
-                    .birthday((Objects.requireNonNull(userRows.getDate("BIRTHDAY"))).toLocalDate())
-                    .build();
-            log.info("Найден пользователь с id {}", id);
-            return user;
+        String sqlQuery = "SELECT * FROM \"USER\" WHERE USER_ID = :userId";
+        Map<String, Long> params = Collections.singletonMap("userId", id);
+        try {
+            return namedParameterJdbcTemplate.queryForObject(sqlQuery, params, this::mapRowToUser);
+        } catch (EmptyResultDataAccessException e) {
+            log.warn("Пользователь с id {} не найден", id);
+            throw new UserDoesNotExistException();
         }
-        log.warn("Пользователь с id {} не найден", id);
-        throw new UserDoesNotExistException();
     }
 
     private User mapRowToUser(ResultSet rs, int rowNum) throws SQLException {
@@ -115,6 +105,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public List<User> getAllFriends(long userId) {
+
         String sqlQuery = "SELECT U.* FROM \"USER\" AS U " +
                 "JOIN FRIENDSHIP AS F ON U.USER_ID = F.USER_SECOND_ID " +
                 "WHERE F.USER_FIRST_ID = ?";
