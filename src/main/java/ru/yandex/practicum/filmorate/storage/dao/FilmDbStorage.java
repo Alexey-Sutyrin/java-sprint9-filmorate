@@ -16,6 +16,7 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -77,9 +78,13 @@ public class FilmDbStorage implements FilmStorage {
         jdbcTemplate.update(sqlDeleteFilmGenres, film.getId());
 
         if (!film.getGenres().isEmpty()) {
+            List<Object[]> batchArgs = new ArrayList<>();
+
             for (Genre genre : film.getGenres()) {
-                jdbcTemplate.update(sqlInsertFilmGenre, film.getId(), genre.getId());
+                batchArgs.add(new Object[]{film.getId(), genre.getId()});
             }
+
+            jdbcTemplate.batchUpdate(sqlInsertFilmGenre, batchArgs);
         }
     }
 
